@@ -1,8 +1,7 @@
 import 'package:croco/MapPage.dart';
-import 'package:croco/RecyclePage.dart';
+import 'package:croco/KarmaPage.dart';
 import 'package:croco/WalletPage.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -34,8 +33,8 @@ class MainPage extends StatelessWidget {
             MainPageState state = context.watch<MainPageState>();
             return Scaffold(
               body: [
-                GoogleMapPage(),
-                WalletPage(),
+                MapPage(),
+                WalletPage(null),
                 RecyclePage(),
               ][state.index],
               bottomNavigationBar: BottomNavigationBar(
@@ -51,7 +50,7 @@ class MainPage extends StatelessWidget {
                     label: "Wallet",
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.recycle),
+                    icon: Icon(Icons.event_note),
                     label: "Recycle",
                   ),
                 ],
