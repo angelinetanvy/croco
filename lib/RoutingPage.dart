@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'WalletPage.dart';
+import 'main.dart';
 
 const double CAMERA_ZOOM = 18;
 const double CAMERA_TILT = 0;
@@ -100,15 +104,36 @@ class RoutingPageState extends State<RoutingPage> {
         bearing: CAMERA_BEARING,
         tilt: CAMERA_TILT,
         target: widget.start);
-    return GoogleMap(
-      myLocationEnabled: true,
-      compassEnabled: true,
-      tiltGesturesEnabled: false,
-      markers: _markers,
-      polylines: _polylines,
-      mapType: MapType.normal,
-      initialCameraPosition: initialLocation,
-      onMapCreated: onMapCreated,
-    );
+
+    return SafeArea(
+        child: Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+          body: 
+            Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: GoogleMap(
+                  myLocationEnabled: true,
+                  compassEnabled: true,
+                  tiltGesturesEnabled: false,
+                  markers: _markers,
+                  polylines: _polylines,
+                  mapType: MapType.normal,
+                  initialCameraPosition: initialLocation,
+                  onMapCreated: onMapCreated,
+                )),
+             floatingActionButton: Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: FloatingActionButton.extended(
+                 icon: Icon(Icons.money),
+                 label: Text("Arrived"),
+                 onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      MainPage(),
+                                ), ),),
+             ),
+    ));
   }
 }

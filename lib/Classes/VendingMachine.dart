@@ -42,6 +42,16 @@ class VendingMachine {
     return this;
   }
 
+  bool checkAvalibility(Goods good) {
+    bool retval = false;
+    this.stocks.forEach((goods) {
+      if ((goods.name == good.name) && goods.stock > 0) {
+        retval = true;
+      }
+    });
+    return retval;
+  }
+
   VendingMachine updateMachine(
     String newName,
     LatLng newCoor,

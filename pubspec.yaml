@@ -37,12 +37,14 @@ dependencies:
   font_awesome: ^5.10.1  
   kmeans: ^0.3.0  
   flutter_google_places: ^0.2.8
+  material_floating_search_bar: ^0.2.6
   geocoder: ^0.2.1
   qrscan: ^0.2.22
   geolocator: ^6.2.1  
   google_maps_flutter: ^0.5.11+1
   flutter_polyline_points: ^0.1.0
   number_slide_animation: ^0.1.1
+  flutter_search_bar: ^2.1.0
   simple_permissions:
     git:
       url: https://github.com/tq-systems/simple_permissions.git
@@ -66,10 +68,12 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/AnW.jpg
-    - assets/images/Coke.jpg
     - assets/images/Sprite.jpg
+    - assets/images/FantaOrange.png
+    - assets/images/Pepsi.png
     - assets/images/Destination.png
     - assets/images/UserLocation.png
+    
 
   # To add assets to your application, add an assets section, like this:
   # assets:

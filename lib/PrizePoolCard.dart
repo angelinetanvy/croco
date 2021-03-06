@@ -6,7 +6,8 @@ import 'dart:math';
 class PrizePoolCard extends StatelessWidget {
   final double elevation;
   final String itemId;
-  PrizePoolCard(this.itemId, {this.elevation = 2});
+  final bool show;
+  PrizePoolCard(this.itemId, {this.elevation = 2,this.show = false});
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
@@ -68,9 +69,9 @@ class PrizePoolCard extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(bottom: 5.0),
-                          child: Text('Item ID'),
+                          child: Text('Prize ID'),
                         ),
-                        ItemId(state.prizeId, show: true),
+                        ItemId(state.prizeId, show: show),
                       ],
                     ),
                   ],
@@ -96,13 +97,13 @@ class ItemId extends StatefulWidget {
 class _ItemIdState extends State<ItemId> with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-        duration: Duration(milliseconds: 2000), vsync: this);
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _controller = AnimationController(
+  //       duration: Duration(milliseconds: 2000), value: this);
+  //   _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -126,31 +127,31 @@ class _ItemIdState extends State<ItemId> with TickerProviderStateMixin {
                     return true;
                   }),
                   builder: (context, snapshot) {
-                    // return AnimatedOpacity(
-                    //   opacity: snapshot.hasData ? 1 : 0,
-                    //   duration: Duration(milliseconds: 1000),
-                    //   child: Text(
-                    //     id[i],
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // );
-                    _controller.forward();
-                    return AnimatedBuilder(
-                      animation: _controller,
-                      builder: (BuildContext context, Widget child) {
-                        bool isFront = _controller.value < .5;
-                        return Transform(
-                          transform: Matrix4.identity()
-                            ..setEntry(3, 2, 0.002)
-                            ..rotateX(
-                                pi * _animation.value + (isFront ? 0 : pi)),
-                          alignment: FractionalOffset.center,
-                          child: isFront ? Text("  ") : Text(widget.id[i]),
-                        );
-                      },
+                    return AnimatedOpacity(
+                      opacity: snapshot.hasData ? 1 : 0,
+                      duration: Duration(milliseconds: 500),
+                      child: Text(
+                        widget.id[i],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
+                    // _controller.forward();
+                    // return AnimatedBuilder(
+                    //   animation: _controller,
+                    //   builder: (BuildContext context, Widget child) {
+                    //     bool isFront = _controller.value < .5;
+                    //     return Transform(
+                    //       transform: Matrix4.identity()
+                    //         ..setEntry(3, 2, 0.002)
+                    //         ..rotateX(
+                    //             pi * _animation.value + (isFront ? 0 : pi)),
+                    //       alignment: FractionalOffset.center,
+                    //       child: isFront ? Text("  ") : Text(widget.id[i]),
+                    //     );
+                    //   },
+                    // );
                   },
                 ),
               ),

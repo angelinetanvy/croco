@@ -75,22 +75,23 @@ class MainAppState with ChangeNotifier {
   double cashPool = 0;
   String prizeId = "SK12343434";
   AppUsers thisAppUser = AppUsers(
-    '1234',
-    'Bleiz',
-    'btio0002@student.monash.edu',
-    10000.0,
-    'Hello Me',
-    'Gender',
-    '2000/10/30',
-    [],
-    LatLng(3.0652, 101.6019),
-  );
+      '1234',
+      'Bleiz',
+      'btio0002@student.monash.edu',
+      10000.0,
+      'Hello Me',
+      'Gender',
+      '2000/10/30',
+      [],
+      LatLng(3.0652, 101.6019),
+      100.0);
 
   List<VendingMachine> vendingMachines;
   List<Goods> goods = [
-    Goods("Coke", 'SK12443434', 2, 2.50, 'assets/images/Coke.jpg'),
+    Goods("Pepsi", 'SK12443434', 2, 2.50, 'assets/images/Pepsi.png'),
     Goods("Sprite", 'SK12343434', 1, 2.50, 'assets/images/Sprite.jpg'),
-    Goods("A&W", 'SKSK12353434', 3, 3.50, 'assets/images/AnW.jpg')
+    Goods("A&W", 'SKSK12353434', 3, 3.50, 'assets/images/AnW.jpg'),
+    Goods("Fanta", 'SKSK12363434', 6, 2.50, 'assets/images/FantaOrange.png')
   ];
 
   MainAppState() {

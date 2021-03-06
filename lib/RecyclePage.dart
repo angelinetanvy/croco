@@ -4,9 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'main.dart';
+
 class KarmaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    MainAppState mainState = context.watch<MainAppState>();
     return ChangeNotifierProvider(
       create: (_) => KarmaPageState(),
       builder: (context, child) {
@@ -15,14 +18,14 @@ class KarmaPage extends StatelessWidget {
             child: Column(
               children: [
                 WalletCard(
-                  100,
+                  mainState.thisAppUser.points,
                   'Karma Points',
                   "KP",
                   Icons.event_note,
                   'Collect Karma Points',
                   () {},
                 ),
-                PrizePoolCard('SK1242dh123'),
+                PrizePoolCard('SK1242dh123', show: true),
               ],
             ),
           ),
