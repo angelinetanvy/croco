@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+
 class AppUsers {
   final String userId, username, email, fullname, gender, dob;
   double balance, points;

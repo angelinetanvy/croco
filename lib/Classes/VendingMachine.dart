@@ -80,8 +80,8 @@ class VendingMachine {
     return {
       'name': name,
       'vendId': vendId,
-      'latitude': coor.latitude,
-      'longitude': coor.longitude,
+      'lat': coor.latitude,
+      'lng': coor.longitude,
       'stocks': stocks,
       'distance': distance,
       'purchasedGoods': purchasedGoods,

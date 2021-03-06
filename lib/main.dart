@@ -96,6 +96,7 @@ class MainAppState with ChangeNotifier {
   ];
 
   MainAppState() {
+
     vendingMachines = [
       VendingMachine(
           "Monash Hive Vending Machine",
@@ -152,6 +153,7 @@ class MainAppState with ChangeNotifier {
         [],
       )
     ];
+
   }
 
   double calculateDistance(LatLng pos1, LatLng pos2) {
