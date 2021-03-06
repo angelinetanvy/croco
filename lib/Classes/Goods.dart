@@ -17,4 +17,14 @@ class Goods {
     price = newPrice;
     return this;
   }
+
+  toMap() {
+    return {
+      'name': name,
+      'type': type,
+      'goodId': goodId,
+      'stock': stock,
+      'image': image,
+    };
+  }
 }

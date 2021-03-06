@@ -1,14 +1,46 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'Goods.dart';
+import 'PurchasingHistory.dart';
 
 class VendingMachine {
   String name;
   String vendId;
   LatLng coor;
   List<Goods> stocks;
+  List<PurchasingHistory> purchasedGoods;
   double distance;
 
-  VendingMachine(this.name, this.vendId, this.coor, this.stocks, this.distance);
+  VendingMachine(
+    this.name,
+    this.vendId,
+    this.coor,
+    this.stocks,
+    this.distance,
+    this.purchasedGoods,
+  ) {
+    if (this.stocks == null) this.stocks = [];
+    if (this.purchasedGoods == null) this.purchasedGoods = [];
+  }
+
+  VendingMachine updateStocks(List<Goods> newStocks) {
+    stocks = newStocks;
+    return this;
+  }
+
+  VendingMachine updatePurchasingHistory(
+      List<PurchasingHistory> Function(List<PurchasingHistory>) callback) {
+    purchasedGoods = callback(purchasedGoods);
+    return this;
+  }
+
+  VendingMachine updateStockNum(Goods good, int removeNum) {
+    stocks = stocks
+        .map((Goods thisGoods) => thisGoods.goodId == good.goodId
+            ? good.upgradeGoodsQuantity(removeNum)
+            : thisGoods)
+        .toList();
+    return this;
+  }
 
   VendingMachine updateMachine(
     String newName,
@@ -24,8 +56,14 @@ class VendingMachine {
   }
 
   factory VendingMachine.fromMap(map) {
-    return VendingMachine(map['name'], map['vendId'],
-        map[LatLng(map['lat'], map['lng'])], map['stocks'], map['distance']);
+    return VendingMachine(
+      map['name'],
+      map['vendId'],
+      map[LatLng(map['lat'], map['lng'])],
+      map['stocks'],
+      map['distance'],
+      map['purchasedGoods'],
+    );
   }
 
   toMap() {
@@ -35,7 +73,8 @@ class VendingMachine {
       'latitude': coor.latitude,
       'longitude': coor.longitude,
       'stocks': stocks,
-      'distance': distance
+      'distance': distance,
+      'purchasedGoods': purchasedGoods,
     };
   }
 }

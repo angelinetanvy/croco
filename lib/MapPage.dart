@@ -1,107 +1,136 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:croco/Classes/AppUsers.dart';
+import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'Classes/Goods.dart';
 import 'Classes/VendingMachine.dart';
+import 'VendingMachinePage.dart';
 
-class MapPage extends StatefulWidget {
-  const MapPage();
-
+class MapPage extends StatelessWidget {
   @override
-  _MapPageState createState() => _MapPageState();
-}
-
-class _MapPageState extends State<MapPage> {
-  GoogleMapController mapController;
-  Set<Marker> _markers = HashSet<Marker>();
-  final LatLng _center = const LatLng(3.064411, 101.600682);
-  List<VendingMachine> vendingMachines;
-
-  @override
-  void initState() {
-    super.initState();
-    List<Goods> goods = [
-      Goods("Coke", 0, 2, 2.50, 'assets/images/Coke.jpg'),
-      Goods("Sprite", 0, 1, 2.50, 'assets/images/Sprite.jpg'),
-      Goods("A&W", 0, 3, 3.50, 'assets/images/AnW.jpg')
-    ];
-    vendingMachines = [
-      VendingMachine("Monash Hive Vending Machine", "0",
-          LatLng(3.064431, 101.600582), goods, 10),
-      VendingMachine("Monash SMR Vending Machine", "1",
-          LatLng(3.061441, 101.600682), goods, 20),
-      VendingMachine("Monash 9305 Vending Machine", "2",
-          LatLng(3.061411, 101.600282), goods, 43),
-      VendingMachine("Rock Cafe Vending Machine", "3",
-          LatLng(3.062411, 101.603682), goods, 22),
-      VendingMachine(
-          "Croco Vending Machine", "4", LatLng(3.061888, 101.603888), goods, 30)
-    ];
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-    setState(
-      () {
-        vendingMachines.forEach((VendingMachine vendingMachine) {
-          _markers.add(
-            Marker(
-              markerId: MarkerId(Random.secure().nextInt(10).toString()),
-              position: vendingMachine.coor,
-              infoWindow: InfoWindow(
-                title: vendingMachine.name,
-                snippet: vendingMachine.distance.toString() + " m",
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Scaffold(),
+  Widget build(BuildContext context) {
+    MainAppState state = context.watch<MainAppState>();
+    Size size = MediaQuery.of(context).size;
+    return ChangeNotifierProvider(
+        create: (_) => GoogleMapState(context, state.vendingMachines),
+        builder: (context, snapshot) {
+          GoogleMapState mapState = context.watch<GoogleMapState>();
+          return SafeArea(
+            child: Scaffold(
+              body: Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: GoogleMap(
+                      onMapCreated: mapState._onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: state.thisAppUser.location,
+                        zoom: 18.0,
+                      ),
+                      markers: mapState._markers,
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 10,
+                    right: 15,
+                    left: 15,
+                    child: Card(
+                      child: Container(
+                        color: Colors.white,
+                        child: Row(
+                          children: <Widget>[
+                            IconButton(
+                              splashColor: Colors.grey,
+                              icon: Icon(Icons.menu),
+                              onPressed: () async {
+                                Prediction p = await PlacesAutocomplete.show(
+                                    context: context, apiKey: kGoogleApiKey);
+                                displayPrediction(p);
+                              },
+                            ),
+                            Expanded(
+                              child: TextField(
+                                cursorColor: Colors.black,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.go,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 15),
+                                  hintText: "Search...",
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.pink,
+                                child: Text('YL'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
         });
-      },
-    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: Stack(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: _center,
-                    zoom: 11.0,
-                  ),
-                  markers: _markers,
-                ),
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+
+      print(lat);
+      print(lng);
+    }
+  }
+}
+
+class GoogleMapState with ChangeNotifier {
+  BuildContext context;
+  GoogleMapController mapController;
+  Set<Marker> _markers = HashSet<Marker>();
+  List<VendingMachine> vendingMachines;
+
+  GoogleMapState(this.context, this.vendingMachines);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+    vendingMachines.forEach((VendingMachine vendingMachine) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(Random.secure().nextInt(10).toString()),
+          position: vendingMachine.coor,
+          infoWindow: InfoWindow(
+            title: vendingMachine.name,
+            snippet: vendingMachine.distance.toString() + " m",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VendingMachinePage(vendingMachine),
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Card(
-                  child: Container(
-                    color: Colors.grey,
-                    height: 50,
-                    width: size.width,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
+    notifyListeners();
   }
 }

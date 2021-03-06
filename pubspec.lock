@@ -132,6 +132,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_google_places:
+    dependency: "direct main"
+    description:
+      name: flutter_google_places
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.8"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -156,6 +163,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.10.1"
+  geocoder:
+    dependency: "direct main"
+    description:
+      name: geocoder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
+  google_api_headers:
+    dependency: transitive
+    description:
+      name: google_api_headers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1+2"
   google_maps_flutter:
     dependency: "direct main"
     description:
@@ -170,6 +191,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  google_maps_webservice:
+    dependency: transitive
+    description:
+      name: google_maps_webservice
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.19"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.2"
   http_parser:
     dependency: transitive
     description:
@@ -219,6 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.4"
+  package_info:
+    dependency: transitive
+    description:
+      name: package_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.3+4"
   path:
     dependency: transitive
     description:
@@ -226,6 +268,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0-nullsafety.1"
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.9.2"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -254,6 +303,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.5"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.25.0"
   simple_permissions:
     dependency: "direct main"
     description:
