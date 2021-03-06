@@ -126,7 +126,8 @@ class RoutingPageState extends State<RoutingPage> {
                padding: const EdgeInsets.all(8.0),
                child: FloatingActionButton.extended(
                  icon: Icon(Icons.money),
-                 label: Text("Arrived"),
+                 label: Text("Arrived", style: TextStyle(color: Colors.white),),
+                 backgroundColor: Colors.black,
                  onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(

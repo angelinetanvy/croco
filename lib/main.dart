@@ -49,6 +49,7 @@ class MainPage extends StatelessWidget {
         KarmaPage(),
       ][state.index],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.black,
         currentIndex: state.index,
         onTap: state.updateIndex,
         items: [

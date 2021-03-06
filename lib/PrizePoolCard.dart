@@ -7,7 +7,7 @@ class PrizePoolCard extends StatelessWidget {
   final double elevation;
   final String itemId;
   final bool show;
-  PrizePoolCard(this.itemId, {this.elevation = 2,this.show = false});
+  PrizePoolCard(this.itemId, {this.elevation = 2, this.show = false});
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();

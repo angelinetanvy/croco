@@ -47,7 +47,8 @@ class MapPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           AppBar(
-                              title: Text("Search for Item"),
+                              backgroundColor: Colors.black,
+                              title: Text("Search for Item",style: TextStyle(color: Colors.white),),
                               actions: <Widget>[
                                 IconButton(
                                     icon: Icon(Icons.search),

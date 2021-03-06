@@ -131,12 +131,12 @@ class WalletPageState with ChangeNotifier {
 
   void scanQR() async {
     showMatchingPopUp(context);
-    // bool result = await SimplePermissions.checkPermission(Permission.Camera);
-    // PermissionStatus status = PermissionStatus.notDetermined;
-    // if (!result)
-    //   status = await SimplePermissions.requestPermission(Permission.Camera);
-    // if (result || status == PermissionStatus.authorized)
-    //   scanResult = await scanner.scan();
+    bool result = await SimplePermissions.checkPermission(Permission.Camera);
+    PermissionStatus status = PermissionStatus.notDetermined;
+    if (!result)
+      status = await SimplePermissions.requestPermission(Permission.Camera);
+    if (result || status == PermissionStatus.authorized)
+      scanResult = await scanner.scan();
   }
 
   void showTopUpPopUp(BuildContext context) {

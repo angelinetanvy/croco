@@ -12,7 +12,8 @@ class VendingMachinePage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("You "),
+          backgroundColor: Colors.black,
+          title: Text("List of Goods "),
         ),
         body: Column(
           children: [
