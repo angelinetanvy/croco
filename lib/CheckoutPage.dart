@@ -143,6 +143,8 @@ class CheckOutPageState with ChangeNotifier {
       ).toList(),
     );
 
+    mainState.updateCashPool(goods.price * 0.02);
+
     mainState.updateIndex(1);
 
     Navigator.pushReplacement(

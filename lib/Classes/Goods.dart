@@ -1,7 +1,7 @@
 class Goods {
   String name;
   String type;
-  int goodId;
+  String goodId;
   int stock;
   double price;
   String image;

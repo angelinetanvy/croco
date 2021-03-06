@@ -6,9 +6,8 @@ import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-
-import 'Classes/Goods.dart';
 import 'Classes/VendingMachine.dart';
+import 'package:geolocator/geolocator.dart';
 import 'VendingMachinePage.dart';
 
 class MapPage extends StatelessWidget {
@@ -41,6 +40,7 @@ class MapPage extends StatelessWidget {
                     right: 15,
                     left: 15,
                     child: Card(
+                      elevation: 2,
                       child: Container(
                         color: Colors.white,
                         child: Row(
@@ -48,11 +48,7 @@ class MapPage extends StatelessWidget {
                             IconButton(
                               splashColor: Colors.grey,
                               icon: Icon(Icons.menu),
-                              onPressed: () async {
-                                Prediction p = await PlacesAutocomplete.show(
-                                    context: context, apiKey: kGoogleApiKey);
-                                displayPrediction(p);
-                              },
+                              onPressed: () {},
                             ),
                             Expanded(
                               child: TextField(
@@ -70,8 +66,8 @@ class MapPage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: CircleAvatar(
-                                backgroundColor: Colors.pink,
-                                child: Text('YL'),
+                                backgroundColor: Colors.deepPurple,
+                                child: Text('RD'),
                               ),
                             ),
                           ],
@@ -84,22 +80,6 @@ class MapPage extends StatelessWidget {
             ),
           );
         });
-  }
-
-  Future<Null> displayPrediction(Prediction p) async {
-    if (p != null) {
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
-
-      var placeId = p.placeId;
-      double lat = detail.result.geometry.location.lat;
-      double lng = detail.result.geometry.location.lng;
-
-      var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
-      print(lat);
-      print(lng);
-    }
   }
 }
 
@@ -132,5 +112,24 @@ class GoogleMapState with ChangeNotifier {
       );
     });
     notifyListeners();
+  }
+}
+
+class UserLocation {
+  Geolocator geolocator = Geolocator();
+  Position userLocation;
+
+  UserLocation() {
+    getLocation();
+  }
+
+  void getLocation() async {
+    userLocation = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+  }
+
+  double getDistance(double lat, double long) {
+    return Geolocator.distanceBetween(
+        userLocation.latitude, userLocation.longitude, lat, long);
   }
 }

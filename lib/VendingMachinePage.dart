@@ -9,9 +9,12 @@ class VendingMachinePage extends StatelessWidget {
   VendingMachinePage(this.vM);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("You "),
+        ),
+        body: Column(
           children: [
             ListTile(
               title: Text(vM.name),
@@ -19,29 +22,44 @@ class VendingMachinePage extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                child: ListView.builder(
-                  itemCount: vM.stocks
-                      .where((Goods goods) => goods.stock > 0)
-                      .toList()
-                      .length,
-                  itemBuilder: (context, index) {
-                    Goods thisGoods = vM.stocks
-                        .where((Goods goods) => goods.stock > 0)
-                        .toList()[index];
-                    return ListTile(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CheckoutPage(vM, thisGoods),
+                child: vM.stocks
+                            .where((Goods goods) => goods.stock > 0)
+                            .toList()
+                            .length ==
+                        0
+                    ? Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Oops no items to sell'),
+                          ],
                         ),
+                      )
+                    : ListView.builder(
+                        itemCount: vM.stocks
+                            .where((Goods goods) => goods.stock > 0)
+                            .toList()
+                            .length,
+                        itemBuilder: (context, index) {
+                          Goods thisGoods = vM.stocks
+                              .where((Goods goods) => goods.stock > 0)
+                              .toList()[index];
+                          return ListTile(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    CheckoutPage(vM, thisGoods),
+                              ),
+                            ),
+                            leading:
+                                Container(child: Image.asset(thisGoods.image)),
+                            title: Text(thisGoods.name),
+                            subtitle: Text(thisGoods.stock.toString()),
+                            trailing: Text("RM " + thisGoods.price.toString()),
+                          );
+                        },
                       ),
-                      leading: Image.asset(thisGoods.image),
-                      title: Text(thisGoods.name),
-                      subtitle: Text(thisGoods.stock.toString()),
-                      trailing: Text("RM " + thisGoods.price.toString()),
-                    );
-                  },
-                ),
               ),
             )
           ],

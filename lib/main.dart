@@ -70,6 +70,7 @@ class MainPage extends StatelessWidget {
 
 class MainAppState with ChangeNotifier {
   int index = 0;
+  double cashPool = 0;
   AppUsers thisAppUser = AppUsers(
     '1234',
     'Bleiz',
@@ -87,9 +88,9 @@ class MainAppState with ChangeNotifier {
 
   List<VendingMachine> vendingMachines;
   List<Goods> goods = [
-    Goods("Coke", 1, 2, 2.50, 'assets/images/Coke.jpg'),
-    Goods("Sprite", 3, 1, 2.50, 'assets/images/Sprite.jpg'),
-    Goods("A&W", 5, 3, 3.50, 'assets/images/AnW.jpg')
+    Goods("Coke", 'SK 124', 2, 2.50, 'assets/images/Coke.jpg'),
+    Goods("Sprite", 'SK 125', 1, 2.50, 'assets/images/Sprite.jpg'),
+    Goods("A&W", 'SK 1210', 3, 3.50, 'assets/images/AnW.jpg')
   ];
 
   MainAppState() {
@@ -105,6 +106,11 @@ class MainAppState with ChangeNotifier {
       VendingMachine("Croco Vending Machine", "4", LatLng(3.061888, 101.603888),
           goods, 30, [])
     ];
+  }
+
+  void updateCashPool(double updateBy) {
+    cashPool += updateBy;
+    notifyListeners();
   }
 
   void updateIndex(int newIndex) {

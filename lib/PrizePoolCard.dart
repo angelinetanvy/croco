@@ -1,4 +1,6 @@
+import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PrizePoolCard extends StatelessWidget {
   final double elevation;
@@ -6,6 +8,7 @@ class PrizePoolCard extends StatelessWidget {
   PrizePoolCard(this.itemId, {this.elevation = 2});
   @override
   Widget build(BuildContext context) {
+    MainAppState state = context.watch<MainAppState>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -42,7 +45,7 @@ class PrizePoolCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '1234',
+                            state.cashPool.toStringAsFixed(2),
                             style: TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.normal,

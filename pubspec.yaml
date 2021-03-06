@@ -37,9 +37,10 @@ dependencies:
   font_awesome: ^5.10.1  
   kmeans: ^0.3.0
   google_maps_flutter: ^1.0.3 
-  flutter_google_places: 0.2.8 
+  flutter_google_places: ^0.2.8
   geocoder: ^0.2.1
   qrscan: ^0.2.22
+  geolocator: ^6.2.1
   simple_permissions:
     git:
       url: https://github.com/tq-systems/simple_permissions.git

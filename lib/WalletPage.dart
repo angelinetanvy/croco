@@ -41,16 +41,18 @@ class WalletPage extends StatelessWidget {
                               .toList()
                               .length ==
                           0
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(
-                            padding: EdgeInsets.all(20),
-                            child: Text("No Item"),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(8),
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                child: Text("No Items"),
+                              ),
                             ),
-                          ),
+                          ],
                         )
                       : ListView.builder(
                           itemCount: mainState.thisAppUser.userHistory
@@ -65,7 +67,7 @@ class WalletPage extends StatelessWidget {
                         ),
                 ),
               ),
-              CustomButton(state.scanQR, 'S C A N'),
+              CustomButton(state.scanQR, 'SCAN TO COLLECT'),
             ],
           ),
         );
@@ -82,14 +84,17 @@ class PickupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.all(10),
       child: Container(
         padding: EdgeInsets.all(10),
         child: ListTile(
           leading: Image.asset(purchasingHistory.goods.image),
           title: Text(purchasingHistory.goods.name),
           subtitle: Text('Awaiting your pickup'),
-          trailing: Text(""),
+          trailing: IconButton(
+            icon: Icon(Icons.directions),
+            onPressed: () {},
+          ),
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
