@@ -11,9 +11,6 @@ class KarmaPage extends StatelessWidget {
       create: (_) => KarmaPageState(),
       builder: (context, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Luck of the Draw"),
-          ),
           body: Container(
             child: Column(
               children: [

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:croco/Classes/AppUsers.dart';
 import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/VendingMachine.dart';
@@ -71,6 +73,7 @@ class MainPage extends StatelessWidget {
 class MainAppState with ChangeNotifier {
   int index = 0;
   double cashPool = 0;
+  String prizeId = "SK12343434";
   AppUsers thisAppUser = AppUsers(
     '1234',
     'Bleiz',
@@ -80,32 +83,86 @@ class MainAppState with ChangeNotifier {
     'Gender',
     '2000/10/30',
     [],
-    LatLng(
-      3.064311,
-      101.600882,
-    ),
+    LatLng(3.0652, 101.6019),
   );
 
   List<VendingMachine> vendingMachines;
   List<Goods> goods = [
-    Goods("Coke", 'SK 124', 2, 2.50, 'assets/images/Coke.jpg'),
-    Goods("Sprite", 'SK 125', 1, 2.50, 'assets/images/Sprite.jpg'),
-    Goods("A&W", 'SK 1210', 3, 3.50, 'assets/images/AnW.jpg')
+    Goods("Coke", 'SK12443434', 2, 2.50, 'assets/images/Coke.jpg'),
+    Goods("Sprite", 'SK12343434', 1, 2.50, 'assets/images/Sprite.jpg'),
+    Goods("A&W", 'SKSK12353434', 3, 3.50, 'assets/images/AnW.jpg')
   ];
 
   MainAppState() {
     vendingMachines = [
-      VendingMachine("Monash Hive Vending Machine", "0",
-          LatLng(3.064431, 101.600582), goods, 10, []),
-      VendingMachine("Monash SMR Vending Machine", "1",
-          LatLng(3.061441, 101.600682), goods, 20, []),
-      VendingMachine("Monash 9305 Vending Machine", "2",
-          LatLng(3.061411, 101.600282), goods, 43, []),
-      VendingMachine("Rock Cafe Vending Machine", "3",
-          LatLng(3.061011, 101.603682), goods, 22, []),
-      VendingMachine("Croco Vending Machine", "4", LatLng(3.061888, 101.603888),
-          goods, 30, [])
+      VendingMachine(
+          "Monash Hive Vending Machine",
+          "0",
+          LatLng(3.064431, 101.600582),
+          goods,
+          calculateDistance(
+            thisAppUser.location,
+            LatLng(
+              3.064431,
+              101.600582,
+            ),
+          ),
+          []),
+      VendingMachine(
+          "Monash SMR Vending Machine",
+          "1",
+          LatLng(3.061441, 101.600682),
+          goods,
+          calculateDistance(
+            thisAppUser.location,
+            LatLng(3.061441, 101.600682),
+          ),
+          []),
+      VendingMachine(
+          "Monash 9305 Vending Machine",
+          "2",
+          LatLng(3.061411, 101.600282),
+          goods,
+          calculateDistance(
+            thisAppUser.location,
+            LatLng(3.061411, 101.600282),
+          ),
+          []),
+      VendingMachine(
+          "Rock Cafe Vending Machine",
+          "3",
+          LatLng(3.061011, 101.603682),
+          goods,
+          calculateDistance(
+            thisAppUser.location,
+            LatLng(3.061011, 101.603682),
+          ),
+          []),
+      VendingMachine(
+        "Croco Vending Machine",
+        "4",
+        LatLng(3.061888, 101.603888),
+        goods,
+        calculateDistance(
+          thisAppUser.location,
+          LatLng(3.061888, 101.603888),
+        ),
+        [],
+      )
     ];
+  }
+
+  double calculateDistance(LatLng pos1, LatLng pos2) {
+    var lat1 = pos1.latitude;
+    var lon1 = pos1.longitude;
+    var lat2 = pos2.latitude;
+    var lon2 = pos2.longitude;
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return double.parse((12742 * asin(sqrt(a)) * 100).toStringAsPrecision(2));
   }
 
   void updateCashPool(double updateBy) {

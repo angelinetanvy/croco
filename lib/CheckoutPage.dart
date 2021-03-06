@@ -1,4 +1,5 @@
 import 'package:croco/Classes/PurchasingHistory.dart';
+import 'package:croco/RoutingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Classes/VendingMachine.dart';
@@ -134,7 +135,9 @@ class CheckOutPageState with ChangeNotifier {
       (List<VendingMachine> list) => list.map(
         (VendingMachine vendingMachine) {
           return vendingMachine.vendId == vM.vendId
-              ? vM.updateStockNum(goods, -1).updatePurchasingHistory((List ls) {
+              ? vendingMachine
+                  .updateStockNum(goods, -1)
+                  .updatePurchasingHistory((List ls) {
                   ls.add(pH);
                   return ls;
                 })
@@ -150,7 +153,10 @@ class CheckOutPageState with ChangeNotifier {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => MainPage(),
+        builder: (context) => RoutingPage(
+          mainState.thisAppUser.location,
+          vM.coor,
+        ),
       ),
     );
   }

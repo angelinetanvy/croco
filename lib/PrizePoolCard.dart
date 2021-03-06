@@ -1,6 +1,7 @@
 import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class PrizePoolCard extends StatelessWidget {
   final double elevation;
@@ -62,7 +63,16 @@ class PrizePoolCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ItemId(itemId)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5.0),
+                          child: Text('Item ID'),
+                        ),
+                        ItemId(state.prizeId, show: true),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -74,16 +84,33 @@ class PrizePoolCard extends StatelessWidget {
   }
 }
 
-class ItemId extends StatelessWidget {
+class ItemId extends StatefulWidget {
   final String id;
-  ItemId(this.id);
+  final bool show;
+  ItemId(this.id, {this.show = false});
+
+  @override
+  _ItemIdState createState() => _ItemIdState();
+}
+
+class _ItemIdState extends State<ItemId> with TickerProviderStateMixin {
+  AnimationController _controller;
+  Animation _animation;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        duration: Duration(milliseconds: 2000), vsync: this);
+    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Wrap(
         alignment: WrapAlignment.center,
         children: [
-          for (int i = 0; i < id.length; i++)
+          for (int i = 0; i < widget.id.length; i++)
             Padding(
               padding: const EdgeInsets.all(1.0),
               child: Container(
@@ -93,20 +120,36 @@ class ItemId extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(8.0),
                 child: FutureBuilder(
-                  future:
-                      Future.delayed(Duration(milliseconds: 500 + i * 500), () {
+                  future: Future.delayed(
+                      Duration(milliseconds: widget.show ? 0 : 1000 + i * 1000),
+                      () {
                     return true;
                   }),
                   builder: (context, snapshot) {
-                    return AnimatedOpacity(
-                      opacity: snapshot.hasData ? 1 : 0,
-                      duration: Duration(milliseconds: 500),
-                      child: Text(
-                        id[i],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    // return AnimatedOpacity(
+                    //   opacity: snapshot.hasData ? 1 : 0,
+                    //   duration: Duration(milliseconds: 1000),
+                    //   child: Text(
+                    //     id[i],
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // );
+                    _controller.forward();
+                    return AnimatedBuilder(
+                      animation: _controller,
+                      builder: (BuildContext context, Widget child) {
+                        bool isFront = _controller.value < .5;
+                        return Transform(
+                          transform: Matrix4.identity()
+                            ..setEntry(3, 2, 0.002)
+                            ..rotateX(
+                                pi * _animation.value + (isFront ? 0 : pi)),
+                          alignment: FractionalOffset.center,
+                          child: isFront ? Text("  ") : Text(widget.id[i]),
+                        );
+                      },
                     );
                   },
                 ),

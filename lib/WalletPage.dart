@@ -16,14 +16,10 @@ class WalletPage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainAppState mainState = context.watch<MainAppState>();
     return ChangeNotifierProvider(
-      create: (_) => WalletPageState(context),
+      create: (_) => WalletPageState(context, mainState),
       builder: (context, snapshot) {
         WalletPageState state = context.watch<WalletPageState>();
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Title"),
-            centerTitle: false,
-          ),
           body: Column(
             children: [
               WalletCard(
@@ -32,7 +28,7 @@ class WalletPage extends StatelessWidget {
                 "RM",
                 Icons.add,
                 'Top Up',
-                () {},
+                () => state.showTopUpPopUp(context),
               ),
               Expanded(
                 child: Container(
@@ -130,7 +126,8 @@ class CustomButton extends StatelessWidget {
 class WalletPageState with ChangeNotifier {
   String scanResult;
   BuildContext context;
-  WalletPageState(this.context);
+  MainAppState mainState;
+  WalletPageState(this.context, this.mainState);
 
   void scanQR() async {
     showMatchingPopUp(context);
@@ -143,7 +140,51 @@ class WalletPageState with ChangeNotifier {
   }
 
   void showTopUpPopUp(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (context) => Container());
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.3,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text("Choose Amount"),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CupertinoButton(
+                  onPressed: () {
+                    addMoney(5.0);
+                  },
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                  color: Colors.grey[600],
+                  child: Text("RM 5"),
+                ),
+                CupertinoButton(
+                  onPressed: () => addMoney(10.0),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                  color: Colors.grey[700],
+                  child: Text("RM 10"),
+                ),
+                CupertinoButton(
+                  onPressed: () => addMoney(20.0),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                  color: Colors.grey[800],
+                  child: Text("RM 20"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void addMoney(double amount) {
+    mainState.updateAppUser(mainState.thisAppUser.updateBalance(amount));
+    Navigator.pop(context);
   }
 
   void showMatchingPopUp(BuildContext context) {
@@ -158,18 +199,43 @@ class WalletPageState with ChangeNotifier {
           height: MediaQuery.of(context).size.height * 0.8,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  PrizePoolCard(
-                    "123",
-                    elevation: 0,
+              PrizePoolCard("123", elevation: 0),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: ListView.builder(
+                    itemCount: mainState.thisAppUser.userHistory
+                        .where((pH) => !pH.hasPickedUp)
+                        .toList()
+                        .length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove_red_eye),
+                            onPressed: () {},
+                          ),
+                          Column(
+                            children: [
+                              Text("helo"),
+                              ItemId(
+                                (mainState.thisAppUser.userHistory
+                                        .where((pH) => !pH.hasPickedUp)
+                                        .toList()[index] as PurchasingHistory)
+                                    .goods
+                                    .goodId,
+                                show: false,
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  CustomButton(() {}, 'REVEAL')
-                ],
+                ),
               ),
+              CustomButton(() {}, 'REVEAL')
             ],
           ),
         ),
