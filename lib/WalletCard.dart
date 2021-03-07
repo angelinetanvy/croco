@@ -68,9 +68,9 @@ class WalletCard extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(actionIcon),
+                      child: Icon(actionIcon,color: Colors.black,),
                     ),
-                    Text(actionLable)
+                    Text(actionLable, style: TextStyle(color: Colors.black),)
                   ],
                 ),
               ),

@@ -1,6 +1,6 @@
+import 'package:croco/Classes/Goods.dart';
+import 'package:croco/Classes/PurchasingHistory.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'Goods.dart';
-import 'PurchasingHistory.dart';
 
 class VendingMachine {
   String name;
@@ -42,6 +42,16 @@ class VendingMachine {
     return this;
   }
 
+  bool checkAvalibility(Goods good) {
+    bool retval = false;
+    this.stocks.forEach((goods) {
+      if ((goods.name == good.name) && goods.stock > 0) {
+        retval = true;
+      }
+    });
+    return retval;
+  }
+
   VendingMachine updateMachine(
     String newName,
     LatLng newCoor,
@@ -60,9 +70,11 @@ class VendingMachine {
       map['name'],
       map['vendId'],
       map[LatLng(map['lat'], map['lng'])],
-      map['stocks'],
+      (map['stocks'] as List).map((data) => Goods.fromMap(data)).toList(),
       map['distance'],
-      map['purchasedGoods'],
+      (map['purchasedGoods'] as List)
+          .map((data) => PurchasingHistory.frommap(data))
+          .toList(),
     );
   }
 
@@ -70,11 +82,12 @@ class VendingMachine {
     return {
       'name': name,
       'vendId': vendId,
-      'latitude': coor.latitude,
-      'longitude': coor.longitude,
-      'stocks': stocks,
+      'lat': coor.latitude,
+      'lng': coor.longitude,
+      'stocks': stocks.map((Goods g) => g.toMap()).toList(),
       'distance': distance,
-      'purchasedGoods': purchasedGoods,
+      'purchasedGoods':
+          purchasedGoods.map((PurchasingHistory pH) => pH.toMap()).toList(),
     };
   }
 }

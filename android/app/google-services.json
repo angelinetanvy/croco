@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "267791529434",
+    "firebase_url": "https://croco-22ea9-default-rtdb.firebaseio.com",
+    "project_id": "croco-22ea9",
+    "storage_bucket": "croco-22ea9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267791529434:android:be5b92c65bccba8f12fce3",
+        "android_client_info": {
+          "package_name": "com.example.croco"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9HpoOjZ91iYo7QxQfIHGniVn7MUYBnq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "267791529434-1tvbquh441svr2g802865eqru7slntns.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "user.ios.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267791529434:android:d47a7824a050de7512fce3",
+        "android_client_info": {
+          "package_name": "com.example.croco1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9HpoOjZ91iYo7QxQfIHGniVn7MUYBnq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "267791529434-1tvbquh441svr2g802865eqru7slntns.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "user.ios.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

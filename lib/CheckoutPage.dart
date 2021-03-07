@@ -1,5 +1,6 @@
 import 'package:croco/Classes/PurchasingHistory.dart';
 import 'package:croco/RoutingPage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Classes/VendingMachine.dart';
@@ -39,19 +40,21 @@ class CheckoutPage extends StatelessWidget {
                       ),
                       Expanded(
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   goods.name,
+                                  softWrap: false,
                                   style: TextStyle(
-                                      fontSize: 50,
+                                      fontSize: 40,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "RM" + goods.price.toString(),
-                                  style: TextStyle(fontSize: 30),
+                                  style: TextStyle(fontSize: 20),
                                 )
                               ],
                             ),
@@ -74,15 +77,118 @@ class CheckoutPage extends StatelessWidget {
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          onTap: () => state.onPurchase(
-                            mainState,
-                            vM,
-                            goods,
-                            context,
-                          ),
+                          onTap: () {
+                            if (index == 0) {
+                              state.onPurchase(
+                                  mainState, vM, goods, context, 0.0);
+                            } else if (index == 1) {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        title: Text("Select Voucher"),
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              state.onPurchase(mainState, vM,
+                                                  goods, context, 1.0);
+                                            },
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 30),
+                                            color: Colors.grey[600],
+                                            child: Column(
+                                              children: [
+                                                Text("- RM 1"),
+                                                Text(
+                                                  "\n100KP",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              state.onPurchase(mainState, vM,
+                                                  goods, context, 2.0);
+                                            },
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 30),
+                                            color: Colors.grey[700],
+                                            child: Column(
+                                              children: [
+                                                Text("- RM 2"),
+                                                Text(
+                                                  "\n200KP",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              state.onPurchase(mainState, vM,
+                                                  goods, context, 5.0);
+                                            },
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 30),
+                                            color: Colors.grey[800],
+                                            child: Column(
+                                              children: [
+                                                Text("- RM 5"),
+                                                Text(
+                                                  "\n500KP",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 30),
+                                        child: CupertinoButton(
+                                          onPressed: () {
+                                            state.onPurchase(mainState, vM,
+                                                goods, context, 0.0);
+                                          },
+                                          child: Text(
+                                            "Pay Without Voucher",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                           title: Text([
                             'Croco-Wallet',
-                            'Credit Card',
+                            'Croco-Wallet + Points',
                             'Cash Payment',
                           ][index]),
                         );
@@ -99,16 +205,106 @@ class CheckoutPage extends StatelessWidget {
   }
 }
 
+// class SliderWidget extends StatefulWidget {
+//   @override
+//   _SliderWidgetState createState() => _SliderWidgetState();
+// }
+
+// class _SliderWidgetState extends State<SliderWidget> {
+//   bool voucher1 = false, voucher2 = false, voucher3 = false;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     showModalBottomSheet(
+//       context: context,
+//       builder: (context) => Container(
+//         height: MediaQuery.of(context).size.height * 0.4,
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             ListTile(
+//               title: Text("Select Voucher"),
+//             ),
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//               children: [
+//                 CupertinoButton(
+//                   pressedOpacity: 0.4,
+//                   onPressed: () {
+//                     setState(() {
+//                       voucher1 = true;
+//                     });
+//                   },
+//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+//                   color: voucher1 ? Colors.blue : Colors.grey[600],
+//                   child: Column(
+//                     children: [
+//                       Text("- RM 1"),
+//                       Text(
+//                         "\n100KP",
+//                         style: TextStyle(
+//                             color: Colors.white, fontWeight: FontWeight.bold),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//                 CupertinoButton(
+//                   pressedOpacity: 0.4,
+//                   onPressed: () {
+//                     setState(() {
+//                       voucher2 = true;
+//                     });
+//                   },
+//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+//                   color: voucher2 ? Colors.blue : Colors.grey[700],
+//                   child: Column(
+//                     children: [
+//                       Text("- RM 2"),
+//                       Text(
+//                         "\n200KP",
+//                         style: TextStyle(
+//                             color: Colors.white, fontWeight: FontWeight.bold),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//                 CupertinoButton(
+//                   pressedOpacity: 0.4,
+//                   onPressed: () {
+//                     setState(() {
+//                       voucher3 = true;
+//                     });
+//                   },
+//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+//                   color: voucher3 ? Colors.blue : Colors.grey[800],
+//                   child: Column(
+//                     children: [
+//                       Text("- RM 5"),
+//                       Text(
+//                         "\n500KP",
+//                         style: TextStyle(
+//                             color: Colors.white, fontWeight: FontWeight.bold),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class CheckOutPageState with ChangeNotifier {
   BuildContext buildContext;
+
   CheckOutPageState(this.buildContext);
 
-  onPurchase(
-    MainAppState mainState,
-    VendingMachine vM,
-    Goods goods,
-    BuildContext context,
-  ) {
+  onPurchase(MainAppState mainState, VendingMachine vM, Goods goods,
+      BuildContext context, double discount) {
     int date = DateTime.now().millisecondsSinceEpoch;
 
     PurchasingHistory pH = new PurchasingHistory(
@@ -124,7 +320,8 @@ class CheckOutPageState with ChangeNotifier {
 
     mainState.updateAppUser(
       mainState.thisAppUser
-          .updateBalance(-goods.price)
+          .updateBalance(-goods.price + discount)
+          .updatePoint(-discount)
           .updatePurchasingHistory((List<dynamic> ls) {
         ls.add(pH);
         return ls;

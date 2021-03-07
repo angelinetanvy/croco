@@ -18,6 +18,16 @@ class Goods {
     return this;
   }
 
+  factory Goods.fromMap(map) {
+    return Goods(
+      map['name'],
+      map['goodId'],
+      map['stock'],
+      map['price'],
+      map['image'],
+    );
+  }
+
   toMap() {
     return {
       'name': name,

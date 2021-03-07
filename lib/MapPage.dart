@@ -3,16 +3,19 @@ import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'Classes/Goods.dart';
 import 'Classes/VendingMachine.dart';
+import 'VendingMachineList.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'VendingMachinePage.dart';
-//import 'package:floating_search_bar/floating_search_bar.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
-    Size size = MediaQuery.of(context).size;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return ChangeNotifierProvider(
         create: (_) => GoogleMapState(context, state),
         builder: (context, snapshot) {
@@ -38,17 +41,32 @@ class MapPage extends StatelessWidget {
                       markers: mapState._markers,
                     ),
                   ),
-                  // FloatingSearchBar.builder(
-                  //   trailing: CircleAvatar(
-                  //     child: Text("YL")
-                  //   )
-                  //   ontap:(){}
-                  //   decoration: InputDecoration.collapsed(
-                  //   hintText: "Search...",
-                  //   ),
-                  // )
+                  Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          AppBar(
+                              backgroundColor: Colors.black,
+                              title: Text(
+                                "Search for Item",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              actions: <Widget>[
+                                IconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      showSearch(
+                                        context: context,
+                                        delegate: DataSearch(),
+                                      );
+                                    }),
+                              ]),
+                        ],
+                      )),
                 ],
               ),
+              drawer: Drawer(),
             ),
           );
         });
@@ -104,6 +122,81 @@ class GoogleMapState with ChangeNotifier {
     notifyListeners();
   }
 }
+
+class DataSearch extends SearchDelegate<String> {
+  List<VendingMachine> availableVM = [];
+  final recentGoods = [
+    Goods("Pepsi", 'SK12443434', 9, 2.50, 'assets/images/Pepsi.png'),
+    Goods("Sprite", 'SK12343434', 6, 2.50, 'assets/images/Sprite.jpg'),
+  ];
+  final goods = [
+    Goods("Pepsi", 'SK12443434', 9, 2.50, 'assets/images/Pepsi.png'),
+    Goods("Sprite", 'SK12343434', 6, 2.50, 'assets/images/Sprite.jpg'),
+    Goods("A&W", 'SKSK12353434', 4, 3.50, 'assets/images/AnW.jpg'),
+    Goods("Fanta Orange", 'SKSK12363434', 6, 2.50,
+        'assets/images/Fanta Orange.png')
+  ];
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow,
+          progress: transitionAnimation,
+        ),
+        onPressed: () {
+          close(context, null);
+        });
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {}
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    MainAppState appState = context.watch<MainAppState>();
+    final suggestionList = query.isEmpty
+        ? recentGoods
+        : goods
+            .where((p) => p.name.toLowerCase().startsWith(query.toLowerCase()))
+            .toList();
+    return ListView.builder(
+        itemBuilder: (context, index) => ListTile(
+            onTap: () => {
+                  for (VendingMachine i in appState.vendingMachines)
+                    {
+                      if (i.checkAvalibility(suggestionList[index]))
+                        availableVM.add(i)
+                    },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VendingMachineList(
+                          availableVM, suggestionList[index]),
+                    ),
+                  ),
+                },
+            leading: Icon(Icons.local_drink),
+            title: Text(suggestionList[index].name)),
+        itemCount: suggestionList.length);
+  }
+}
+
+// bool isAvailable(List<VendingMachine> availableVM, Goods item){
+//   availableVM.forEach((vm) )
+// }
 
 // Positioned(
 //                     top: 10,

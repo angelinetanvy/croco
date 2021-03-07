@@ -4,14 +4,16 @@ import 'package:croco/Classes/AppUsers.dart';
 import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/VendingMachine.dart';
 import 'package:croco/MapPage.dart';
-import 'package:croco/KarmaPage.dart';
 import 'package:croco/RecyclePage.dart';
 import 'package:croco/WalletPage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     ChangeNotifierProvider(
       create: (_) => MainAppState(),
@@ -78,19 +80,21 @@ class MainAppState with ChangeNotifier {
     '1234',
     'Bleiz',
     'btio0002@student.monash.edu',
-    10000.0,
+    100.0,
     'Hello Me',
     'Gender',
     '2000/10/30',
     [],
     LatLng(3.0652, 101.6019),
+    100,
   );
 
   List<VendingMachine> vendingMachines;
   List<Goods> goods = [
-    Goods("Coke", 'SK12443434', 2, 2.50, 'assets/images/Coke.jpg'),
+    Goods("Pepsi", 'SK12443434', 2, 2.50, 'assets/images/Pepsi.png'),
     Goods("Sprite", 'SK12343434', 1, 2.50, 'assets/images/Sprite.jpg'),
-    Goods("A&W", 'SKSK12353434', 3, 3.50, 'assets/images/AnW.jpg')
+    Goods("A&W", 'SKSK12353434', 3, 3.50, 'assets/images/AnW.jpg'),
+    Goods("Fanta", 'SKSK13353434', 3, 3.50, 'assets/images/FantaOrange.png')
   ];
 
   MainAppState() {

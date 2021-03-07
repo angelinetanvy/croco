@@ -131,12 +131,12 @@ class WalletPageState with ChangeNotifier {
 
   void scanQR() async {
     showMatchingPopUp(context);
-    // bool result = await SimplePermissions.checkPermission(Permission.Camera);
-    // PermissionStatus status = PermissionStatus.notDetermined;
-    // if (!result)
-    //   status = await SimplePermissions.requestPermission(Permission.Camera);
-    // if (result || status == PermissionStatus.authorized)
-    //   scanResult = await scanner.scan();
+    bool result = await SimplePermissions.checkPermission(Permission.Camera);
+    PermissionStatus status = PermissionStatus.notDetermined;
+    if (!result)
+      status = await SimplePermissions.requestPermission(Permission.Camera);
+    if (result || status == PermissionStatus.authorized)
+      scanResult = await scanner.scan();
   }
 
   void showTopUpPopUp(BuildContext context) {
@@ -200,7 +200,7 @@ class WalletPageState with ChangeNotifier {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PrizePoolCard("123", elevation: 0),
+              PrizePoolCard("123", elevation: 0, show: true),
               Expanded(
                 child: Container(
                   color: Colors.white,
@@ -218,7 +218,7 @@ class WalletPageState with ChangeNotifier {
                           ),
                           Column(
                             children: [
-                              Text("helo"),
+                              Text("Item ID"),
                               ItemId(
                                 (mainState.thisAppUser.userHistory
                                         .where((pH) => !pH.hasPickedUp)
