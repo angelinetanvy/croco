@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "267791529434-2v0ttmt1ovkqrk0j8tqidp0vg3gfbfau.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.croco",
+            "certificate_hash": "11e24cdb964af6107cfa492f66644a5f1ab921fd"
+          }
+        },
+        {
           "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -50,6 +58,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "267791529434-c43f5dn9dmgm2vakn866qtg4gee6s9n6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.croco1",
+            "certificate_hash": "11e24cdb964af6107cfa492f66644a5f1ab921fd"
+          }
+        },
         {
           "client_id": "267791529434-6l5au4mjfqlnc9a959orikd1il0vurp2.apps.googleusercontent.com",
           "client_type": 3
