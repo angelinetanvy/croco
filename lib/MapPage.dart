@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:croco/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'Classes/Goods.dart';
@@ -12,6 +13,36 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatelessWidget {
+  FlutterLocalNotificationsPlugin localNotif;
+
+  void initState() {
+    var androidInitialize = new AndroidInitializationSettings('ic_launcher.png');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+  }
+
+  Future _showNotification() async {
+    var androidInitialize = new AndroidInitializationSettings('@mipmap/logo');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+    var androidDetails = new AndroidNotificationDetails(
+        "channelId", "channelName", "There is a vending machine nearby!",
+        importance: Importance.high);
+    var iosDetails = new IOSNotificationDetails();
+    var generalNotificationDetails =
+        new NotificationDetails(android: androidDetails, iOS: iosDetails);
+    await localNotif.show(0, "Feeling thirsty?", "There is a vending machine nearby!",
+        generalNotificationDetails);
+  }
+
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
@@ -62,6 +93,10 @@ class MapPage extends StatelessWidget {
                                         delegate: DataSearch(),
                                       );
                                     }),
+                                IconButton(
+                                  icon: Icon(Icons.notifications_active),
+                                  onPressed: _showNotification,
+                                )
                               ]),
                         ],
                       )),
@@ -194,48 +229,3 @@ class DataSearch extends SearchDelegate<String> {
         itemCount: suggestionList.length);
   }
 }
-
-// bool isAvailable(List<VendingMachine> availableVM, Goods item){
-//   availableVM.forEach((vm) )
-// }
-
-// Positioned(
-//                     top: 10,
-//                     right: 15,
-//                     left: 15,
-//                     child: Card(
-//                       elevation: 2,
-//                       child: Container(
-//                         color: Colors.white,
-//                         child: Row(
-//                           children: <Widget>[
-//                             IconButton(
-//                               splashColor: Colors.grey,
-//                               icon: Icon(Icons.menu),
-//                               onPressed: () {},
-//                             ),
-//                             Expanded(
-//                               child: TextField(
-//                                 cursorColor: Colors.black,
-//                                 keyboardType: TextInputType.text,
-//                                 textInputAction: TextInputAction.go,
-//                                 decoration: InputDecoration(
-//                                   border: InputBorder.none,
-//                                   contentPadding:
-//                                       EdgeInsets.symmetric(horizontal: 15),
-//                                   hintText: "Search...",
-//                                 ),
-//                               ),
-//                             ),
-//                             Padding(
-//                               padding: const EdgeInsets.only(right: 8.0),
-//                               child: CircleAvatar(
-//                                 backgroundColor: Colors.deepPurple,
-//                                 child: Text('RD'),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),

@@ -47,6 +47,7 @@ dependencies:
   google_maps_flutter: ^0.5.11+1
   flutter_polyline_points: ^0.1.0
   number_slide_animation: ^0.1.1
+  flutter_local_notifications: ^4.0.1+2
   flutter_search_bar: ^2.1.0
   simple_permissions:
     git:
