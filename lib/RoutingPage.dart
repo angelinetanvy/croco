@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'WalletPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'main.dart';
 
 const double CAMERA_ZOOM = 18;
@@ -106,40 +105,79 @@ class RoutingPageState extends State<RoutingPage> {
         target: widget.start);
 
     return SafeArea(
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: GoogleMap(
-            myLocationEnabled: true,
-            compassEnabled: true,
-            tiltGesturesEnabled: false,
-            markers: _markers,
-            polylines: _polylines,
-            mapType: MapType.normal,
-            initialCameraPosition: initialLocation,
-            onMapCreated: onMapCreated,
-          ),
-        ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FloatingActionButton.extended(
-            icon: Icon(Icons.money),
-            label: Text(
-              "Arrived",
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.black,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MainPage(),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+        child: Scaffold(
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.startDocked,
+            body: Stack(children: [
+              Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: GoogleMap(
+                    myLocationEnabled: true,
+                    compassEnabled: true,
+                    tiltGesturesEnabled: false,
+                    markers: _markers,
+                    polylines: _polylines,
+                    mapType: MapType.normal,
+                    initialCameraPosition: initialLocation,
+                    onMapCreated: onMapCreated,
+                  )),
+              Column(
+                children: [
+                  CupertinoButton(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(7)),
+                      child: Icon(
+                        Icons.map,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      MapUtils.openMap(
+                          widget.end.latitude, widget.end.longitude);
+                    },
+                  ),
+                  CupertinoButton(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(7)),
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainPage(),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              )
+            ])));
+  }
+}
+
+class MapUtils {
+  MapUtils._();
+
+  static Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
   }
 }

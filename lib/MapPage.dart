@@ -3,6 +3,7 @@ import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'Classes/Goods.dart';
@@ -12,6 +13,37 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'VendingMachinePage.dart';
 
 class MapPage extends StatelessWidget {
+  FlutterLocalNotificationsPlugin localNotif;
+
+  void initState() {
+    var androidInitialize =
+        new AndroidInitializationSettings('ic_launcher.png');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+  }
+
+  Future _showNotification() async {
+    var androidInitialize = new AndroidInitializationSettings('@mipmap/logo');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+    var androidDetails = new AndroidNotificationDetails(
+        "channelId", "channelName", "There is a vending machine nearby!",
+        importance: Importance.high);
+    var iosDetails = new IOSNotificationDetails();
+    var generalNotificationDetails =
+        new NotificationDetails(android: androidDetails, iOS: iosDetails);
+    await localNotif.show(0, "Feeling thirsty?",
+        "There is a vending machine nearby!", generalNotificationDetails);
+  }
+
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();

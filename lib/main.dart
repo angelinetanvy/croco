@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:croco/AppLoginPage.dart';
 
 import 'package:croco/MainAppState.dart';
@@ -44,30 +42,31 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
     return SafeArea(
-        child: Scaffold(
-      body: [
-        MapPage(),
-        WalletPage(),
-        KarmaPage(),
-      ][state.index],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: state.index,
-        onTap: state.updateIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Map",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.wallet_membership),
-            label: "Wallet",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_note),
-            label: "Recycle",
-          ),
-        ],
+      child: Scaffold(
+        body: [
+          MapPage(),
+          WalletPage(),
+          KarmaPage(),
+        ][state.index],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: state.index,
+          onTap: state.updateIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              label: "Map",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.wallet_membership),
+              label: "Wallet",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_note),
+              label: "Recycle",
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
