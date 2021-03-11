@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'WalletPage.dart';
 import 'main.dart';
 
@@ -124,17 +125,27 @@ class RoutingPageState extends State<RoutingPage> {
                 )),
              floatingActionButton: Padding(
                padding: const EdgeInsets.all(8.0),
-               child: FloatingActionButton.extended(
+               child: Column(children: [
+                 FloatingActionButton.extended(
                  icon: Icon(Icons.money),
                  label: Text("Arrived", style: TextStyle(color: Colors.white),),
                  backgroundColor: Colors.black,
-                 onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainPage(),
-                                ), ),),
+                 onPressed: () => MapUtils.openMap(-3.823216,-38.481700)),
+                ],)
              ),
     ));
+  }
+}
+class MapUtils {
+
+  MapUtils._();
+
+  static Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
   }
 }

@@ -9,6 +9,7 @@ import 'VendingMachineList.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'VendingMachinePage.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatelessWidget {
   @override
