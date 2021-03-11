@@ -1,10 +1,11 @@
+import 'package:croco/Classes/PurchasingHistory.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppUsers {
   final String userId, username, email, fullname, gender, dob;
   double balance, points;
   LatLng location;
-  List<dynamic> userHistory;
+  List<PurchasingHistory> userHistory;
 
   AppUsers(this.userId, this.username, this.email, this.balance, this.fullname,
       this.gender, this.dob, this.userHistory, this.location, this.points);
@@ -34,8 +35,10 @@ class AppUsers {
         map["fullname"],
         map["gender"],
         map["dob"],
-        map["userHistory"],
-        map[LatLng(map['lat'], map['lng'])],
+        (map['userHistory'] as List)
+            .map((data) => PurchasingHistory.frommap(data))
+            .toList(),
+        LatLng(map['lat'], map['lng']),
         map["points"]?.toDouble());
   }
 
@@ -48,7 +51,8 @@ class AppUsers {
       'fullname': fullname,
       'gender': gender,
       'dob': dob,
-      'userHistory': userHistory,
+      'userHistory':
+          userHistory.map((PurchasingHistory pH) => pH.toMap()).toList(),
       'lat': location.latitude,
       'lng': location.longitude,
       'points': points,

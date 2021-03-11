@@ -1,9 +1,14 @@
+import 'package:croco/Classes/AppUsers.dart';
+import 'package:croco/Firebase.dart';
+import 'package:croco/MainAppState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppLoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    MainAppState state = context.watch<MainAppState>();
     return Scaffold(
       body: Center(
         child: Column(
@@ -18,8 +23,8 @@ class AppLoginPage extends StatelessWidget {
                     width: 150,
                     height: 150,
                     child: Image(
-                      image: NetworkImage(
-                        "https://raw.githubusercontent.com/angelinetanvy/Yulehensem/main/croco/assets/images/logo.png?token=AOYPJSHNOSN36ZXTBH33243AJIBCO",
+                      image: AssetImage(
+                        "assets/images/vendingMachineImage.png",
                       ),
                     ),
                   ),
@@ -40,10 +45,16 @@ class AppLoginPage extends StatelessWidget {
                 children: [
                   Icon(Icons.login),
                   SizedBox(width: 20),
-                  Text("Login with google"),
+                  Text("Login with Google"),
                 ],
               ),
-              onPressed: () {},
+              onPressed: () {
+                FirebaseClass().loginUserWithFirebase(
+                  (AppUsers appUser) {
+                    state.updateAppUser(appUser);
+                  },
+                );
+              },
             ),
           ],
         ),

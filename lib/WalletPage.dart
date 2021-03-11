@@ -1,8 +1,7 @@
-import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/PurchasingHistory.dart';
+import 'package:croco/MainAppState.dart';
 import 'package:croco/PrizePoolCard.dart';
 import 'package:croco/WalletCard.dart';
-import 'package:croco/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

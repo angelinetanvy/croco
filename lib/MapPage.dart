@@ -1,5 +1,7 @@
 import 'dart:collection';
-import 'package:croco/main.dart';
+import 'package:croco/Firebase.dart';
+import 'package:croco/MainAppState.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +10,11 @@ import 'Classes/VendingMachine.dart';
 import 'VendingMachineList.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'VendingMachinePage.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
     return ChangeNotifierProvider(
         create: (_) => GoogleMapState(context, state),
         builder: (context, snapshot) {
@@ -42,31 +41,43 @@ class MapPage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          AppBar(
-                              backgroundColor: Colors.black,
-                              title: Text(
-                                "Search for Item",
-                                style: TextStyle(color: Colors.white),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 8,
+                            child: CupertinoButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                showSearch(
+                                  context: context,
+                                  delegate: DataSearch(),
+                                );
+                              },
+                              child: CupertinoTextField(
+                                enabled: false,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                ),
+                                padding: EdgeInsets.all(16),
+                                placeholderStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                placeholder: 'Search',
                               ),
-                              actions: <Widget>[
-                                IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      showSearch(
-                                        context: context,
-                                        delegate: DataSearch(),
-                                      );
-                                    }),
-                              ]),
-                        ],
-                      )),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              drawer: Drawer(),
             ),
           );
         });
@@ -88,13 +99,18 @@ class GoogleMapState with ChangeNotifier {
 
   GoogleMapState(this.context, this.appState) {
     setSourceAndDestinationIcons();
+    FirebaseClass().vendingMachineListStream((a) {
+      print(a.toMap());
+    });
   }
 
   void setSourceAndDestinationIcons() async {
     sourceIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5), 'assets/UserLocation.png');
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/images/UserLocation.png');
     destinationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5), 'assets/Destination.png');
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/images/Destination.png');
   }
 
   void _onMapCreated(GoogleMapController controller) {

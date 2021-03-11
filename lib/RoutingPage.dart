@@ -39,12 +39,12 @@ class RoutingPageState extends State<RoutingPage> {
 
   void setSourceAndDestinationIcons() async {
     sourceIcon = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(devicePixelRatio: 2.5),
-      'assets/UserLocation.png',
+      ImageConfiguration(devicePixelRatio: 50),
+      'assets/images/UserLocation.png',
     );
     destinationIcon = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(devicePixelRatio: 2.5),
-      'assets/destination_map_marker.png',
+      ImageConfiguration(devicePixelRatio: 50),
+      'assets/images/Destination.png',
     );
   }
 
@@ -106,35 +106,40 @@ class RoutingPageState extends State<RoutingPage> {
         target: widget.start);
 
     return SafeArea(
-        child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
-          body: 
-            Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: GoogleMap(
-                  myLocationEnabled: true,
-                  compassEnabled: true,
-                  tiltGesturesEnabled: false,
-                  markers: _markers,
-                  polylines: _polylines,
-                  mapType: MapType.normal,
-                  initialCameraPosition: initialLocation,
-                  onMapCreated: onMapCreated,
-                )),
-             floatingActionButton: Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: FloatingActionButton.extended(
-                 icon: Icon(Icons.money),
-                 label: Text("Arrived", style: TextStyle(color: Colors.white),),
-                 backgroundColor: Colors.black,
-                 onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainPage(),
-                                ), ),),
-             ),
-    ));
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: GoogleMap(
+            myLocationEnabled: true,
+            compassEnabled: true,
+            tiltGesturesEnabled: false,
+            markers: _markers,
+            polylines: _polylines,
+            mapType: MapType.normal,
+            initialCameraPosition: initialLocation,
+            onMapCreated: onMapCreated,
+          ),
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton.extended(
+            icon: Icon(Icons.money),
+            label: Text(
+              "Arrived",
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainPage(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

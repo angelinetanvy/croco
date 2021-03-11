@@ -26,7 +26,7 @@ class PurchasingHistory {
       map['hasPickedUp'],
       map['vendingName'],
       LatLng(map['vendingLat'], map['vendingLong']),
-      map['goods'],
+      Goods.fromMap(map['goods']),
       purchaseDate: map['purchaseDate'],
     );
   }
@@ -41,7 +41,7 @@ class PurchasingHistory {
       'vendingName': vendingName,
       'vendingLat': vendingLocation.latitude,
       'vendingLong': vendingLocation.longitude,
-      'goods': goods,
+      'goods': goods.toMap(),
     };
   }
 }

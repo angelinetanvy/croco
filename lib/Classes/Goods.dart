@@ -32,6 +32,7 @@ class Goods {
     return {
       'name': name,
       'type': type,
+      'price': price,
       'goodId': goodId,
       'stock': stock,
       'image': image,

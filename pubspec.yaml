@@ -39,6 +39,7 @@ dependencies:
   kmeans: ^0.3.0  
   flutter_google_places: ^0.2.8
   material_floating_search_bar: ^0.2.6
+  google_sign_in: ^4.5.9
   geocoder: ^0.2.1
   qrscan: ^0.2.22
   geolocator: ^6.2.1  
@@ -75,6 +76,7 @@ flutter:
     - assets/images/Pepsi.png
     - assets/images/Destination.png
     - assets/images/UserLocation.png
+    - assets/images/vendingMachineImage.png
     
 
   # To add assets to your application, add an assets section, like this:

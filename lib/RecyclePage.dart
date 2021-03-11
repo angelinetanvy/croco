@@ -1,3 +1,4 @@
+import 'package:croco/MainAppState.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:croco/PrizePoolCard.dart';
 import 'package:croco/WalletCard.dart';
@@ -5,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_permissions/simple_permissions.dart';
-
-import 'main.dart';
 
 class KarmaPage extends StatelessWidget {
   @override

@@ -1,11 +1,12 @@
 import 'package:croco/Classes/PurchasingHistory.dart';
+import 'package:croco/Firebase.dart';
+import 'package:croco/MainAppState.dart';
 import 'package:croco/RoutingPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Classes/VendingMachine.dart';
 import 'Classes/Goods.dart';
-import 'main.dart';
 
 class CheckoutPage extends StatelessWidget {
   final VendingMachine vM;
@@ -169,8 +170,19 @@ class CheckoutPage extends StatelessWidget {
                                             horizontal: 10, vertical: 30),
                                         child: CupertinoButton(
                                           onPressed: () {
-                                            state.onPurchase(mainState, vM,
-                                                goods, context, 0.0);
+                                            state.onPurchase(
+                                              mainState,
+                                              vM,
+                                              Goods(
+                                                goods.name,
+                                                goods.goodId,
+                                                1,
+                                                goods.price,
+                                                goods.image,
+                                              ),
+                                              context,
+                                              0.0,
+                                            );
                                           },
                                           child: Text(
                                             "Pay Without Voucher",
@@ -205,107 +217,27 @@ class CheckoutPage extends StatelessWidget {
   }
 }
 
-// class SliderWidget extends StatefulWidget {
-//   @override
-//   _SliderWidgetState createState() => _SliderWidgetState();
-// }
-
-// class _SliderWidgetState extends State<SliderWidget> {
-//   bool voucher1 = false, voucher2 = false, voucher3 = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     showModalBottomSheet(
-//       context: context,
-//       builder: (context) => Container(
-//         height: MediaQuery.of(context).size.height * 0.4,
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             ListTile(
-//               title: Text("Select Voucher"),
-//             ),
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 CupertinoButton(
-//                   pressedOpacity: 0.4,
-//                   onPressed: () {
-//                     setState(() {
-//                       voucher1 = true;
-//                     });
-//                   },
-//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-//                   color: voucher1 ? Colors.blue : Colors.grey[600],
-//                   child: Column(
-//                     children: [
-//                       Text("- RM 1"),
-//                       Text(
-//                         "\n100KP",
-//                         style: TextStyle(
-//                             color: Colors.white, fontWeight: FontWeight.bold),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//                 CupertinoButton(
-//                   pressedOpacity: 0.4,
-//                   onPressed: () {
-//                     setState(() {
-//                       voucher2 = true;
-//                     });
-//                   },
-//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-//                   color: voucher2 ? Colors.blue : Colors.grey[700],
-//                   child: Column(
-//                     children: [
-//                       Text("- RM 2"),
-//                       Text(
-//                         "\n200KP",
-//                         style: TextStyle(
-//                             color: Colors.white, fontWeight: FontWeight.bold),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//                 CupertinoButton(
-//                   pressedOpacity: 0.4,
-//                   onPressed: () {
-//                     setState(() {
-//                       voucher3 = true;
-//                     });
-//                   },
-//                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-//                   color: voucher3 ? Colors.blue : Colors.grey[800],
-//                   child: Column(
-//                     children: [
-//                       Text("- RM 5"),
-//                       Text(
-//                         "\n500KP",
-//                         style: TextStyle(
-//                             color: Colors.white, fontWeight: FontWeight.bold),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class CheckOutPageState with ChangeNotifier {
   BuildContext buildContext;
 
   CheckOutPageState(this.buildContext);
 
-  onPurchase(MainAppState mainState, VendingMachine vM, Goods goods,
-      BuildContext context, double discount) {
+  onPurchase(
+    MainAppState mainState,
+    VendingMachine vM,
+    Goods goods,
+    BuildContext context,
+    double discount,
+  ) {
     int date = DateTime.now().millisecondsSinceEpoch;
+
+    if (mainState.thisAppUser.balance < goods.price) {
+      final snackBar = SnackBar(
+        content: Text('Oops, please top up your wallet !'),
+      );
+      ScaffoldMessenger.of(buildContext).showSnackBar(snackBar);
+      return null;
+    }
 
     PurchasingHistory pH = new PurchasingHistory(
       date,
@@ -314,7 +246,7 @@ class CheckOutPageState with ChangeNotifier {
       false,
       vM.name,
       vM.coor,
-      Goods(goods.name, goods.goodId, 1, goods.price, goods.image),
+      goods,
       purchaseDate: date,
     );
 
@@ -331,22 +263,23 @@ class CheckOutPageState with ChangeNotifier {
     mainState.updateVendingMachineList(
       (List<VendingMachine> list) => list.map(
         (VendingMachine vendingMachine) {
-          return vendingMachine.vendId == vM.vendId
-              ? vendingMachine
-                  .updateStockNum(goods, -1)
-                  .updatePurchasingHistory((List ls) {
-                  ls.add(pH);
-                  return ls;
-                })
-              : vendingMachine;
+          if (vendingMachine.vendId == vM.vendId) {
+            VendingMachine venM = vendingMachine
+                .updateStockNum(goods, -1)
+                .updatePurchasingHistory((List ls) {
+              ls.add(pH);
+              return ls;
+            });
+            FirebaseClass().updateVendingMachine(venM.vendId, venM);
+            return venM;
+          }
+          return vendingMachine;
         },
       ).toList(),
     );
 
     mainState.updateCashPool(goods.price * 0.02);
-
     mainState.updateIndex(1);
-
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

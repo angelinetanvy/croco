@@ -69,7 +69,7 @@ class VendingMachine {
     return VendingMachine(
       map['name'],
       map['vendId'],
-      map[LatLng(map['lat'], map['lng'])],
+      LatLng(map['lat'], map['lng']),
       (map['stocks'] as List).map((data) => Goods.fromMap(data)).toList(),
       map['distance'],
       (map['purchasedGoods'] as List)
