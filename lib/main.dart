@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:croco/AppLoginPage.dart';
 import 'package:croco/Classes/AppUsers.dart';
 import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/VendingMachine.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MainPage(),
+      home: AppLoginPage(),
     );
   }
 }

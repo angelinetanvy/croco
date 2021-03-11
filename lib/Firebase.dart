@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:croco/Classes/AppUsers.dart';
 
 class FirebaseClass {
   CollectionReference vendingmachinereference =
@@ -8,11 +9,16 @@ class FirebaseClass {
   CollectionReference userReference =
       FirebaseFirestore.instance.collection('users');
 
-  StreamSubscription userMachineListStream() {
-    return userReference.snapshots().listen((event) {
-      event.docs.forEach((c) => print(c));
-    });
+  StreamSubscription userMachineListStream(
+      String userId, void Function(AppUsers) listenFunction) {
+    return userReference
+        .doc(userId)
+        .snapshots()
+        .listen((event) => listenFunction(AppUsers.fromMap(event.data())));
   }
+
+  void updatesUserInFirebase(String userId, AppUsers updatedUser) =>
+      userReference.doc(userId).update(updatedUser.toMap());
 
   StreamSubscription vendingMachineListStream() {
     return vendingmachinereference
