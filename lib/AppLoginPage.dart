@@ -9,6 +9,29 @@ class AppLoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 20),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    child: Image(
+                      image: NetworkImage(
+                        "https://raw.githubusercontent.com/angelinetanvy/Yulehensem/main/croco/assets/images/logo.png?token=AOYPJSHNOSN36ZXTBH33243AJIBCO",
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "WELCOME",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
             CupertinoButton(
               color: Colors.black,
               child: Row(
