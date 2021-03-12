@@ -44,7 +44,7 @@ class VendingMachineList extends StatelessWidget {
                               ),
                             ),
                             title: Text(thisVM.name),
-                            subtitle: Text(thisVM.distance.toString()),
+                            subtitle: Text(thisVM.distance.toString() + " m"),
                           );
                         },
                       ),
