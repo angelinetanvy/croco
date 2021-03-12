@@ -164,9 +164,10 @@ class FirebaseClass {
     */
 
     // Analyzes the user purchasing history that has not picked up yet
-    List<PurchasingHistory> prePuchases = appUsers.userHistory.where(
-        (PurchasingHistory pH) =>
-            !pH.hasPickedUp && pH.vendId == vendingMachineId);
+    List<PurchasingHistory> prePuchases = appUsers.userHistory
+        .where((PurchasingHistory pH) =>
+            !pH.hasPickedUp && pH.vendId == vendingMachineId)
+        .toList();
 
     // Will set up a node in the realtime database where the machine will listen
     // to to make appropriate changes
@@ -176,11 +177,13 @@ class FirebaseClass {
           .set(
             VendingMachineCommands(
               vendingMachineId,
-              prePuchases.map((pH) => pH.goods),
+              prePuchases.map((pH) => pH.goods).toList(),
               false,
             ).toMap(),
           )
-          .then((_) => afterSuccess());
+          .then((_) {
+        afterSuccess();
+      });
     } else
       afterFailed();
   }
