@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:croco/AppLoginPage.dart';
 import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -58,13 +59,7 @@ class MapPage extends StatelessWidget {
               appBar: AppBar(
                 leading: IconButton(
                   onPressed: () async {
-                    final _googleSignIn = new GoogleSignIn(
-                      scopes: [
-                        'email',
-                        'https://www.googleapis.com/auth/contacts.readonly',
-                      ],
-                    );
-                    await _googleSignIn.signOut();
+                    FirebaseAuth.instance.signOut();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseClass {
   CollectionReference vendingmachinereference =
@@ -18,52 +17,117 @@ class FirebaseClass {
       FirebaseFirestore.instance.collection('users');
   DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
 
-  Future<void> loginUserWithFirebase(
-      Function(AppUsers) onFinish, context) async {
-    final _googleSignIn = new GoogleSignIn(
-      scopes: [
-        'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(credential).then(
-      (value) {
-        if (value.additionalUserInfo.isNewUser)
-          userReference.doc(value.user.uid).set(AppUsers(
-                  value.user.uid,
-                  value.user.displayName,
-                  value.user.email,
-                  0,
-                  value.user.displayName,
-                  "male",
-                  "2000 - 10 - 30",
-                  [],
-                  LatLng(3.064411, 101.600682),
-                  0)
-              .toMap());
-        userReference.doc(value.user.uid).snapshots().listen(
-              (event) => onFinish(
-                AppUsers.fromMap(
-                  event.data(),
-                ),
+  loginWithEmailAndPassword(
+    String email,
+    String password,
+    Function(AppUsers) onFinish,
+    BuildContext context,
+  ) {
+    print("Hello");
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    )
+        .then((value) {
+      userReference.doc(value.user.uid).snapshots().listen(
+            (event) => onFinish(
+              AppUsers.fromMap(
+                event.data(),
               ),
-            );
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MainPage()));
-      },
-    );
+            ),
+          );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MainPage(),
+        ),
+      );
+    }).catchError((e) {
+      if (e.code == "user-not-found") {
+        FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password)
+            .then(
+          (UserCredential value) {
+            userReference
+                .doc(value.user.uid)
+                .set(
+                  AppUsers(
+                          value.user.uid,
+                          value.user.displayName,
+                          value.user.email,
+                          0,
+                          value.user.displayName,
+                          "male",
+                          "2000 - 10 - 30",
+                          [],
+                          LatLng(3.064411, 101.600682),
+                          0)
+                      .toMap(),
+                )
+                .then(
+                  (_) => userReference.doc(value.user.uid).snapshots().listen(
+                        (event) => onFinish(
+                          AppUsers.fromMap(
+                            event.data(),
+                          ),
+                        ),
+                      ),
+                )
+                .then((value) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainPage(),
+                ),
+              );
+            });
+          },
+        );
+      } else if (e.code == "user-not-found") {}
+    });
   }
+
+  // Future<void> loginUserWithFirebase(
+  //     Function(AppUsers) onFinish, context) async {
+  //   final _googleSignIn = new GoogleSignIn(
+  //     scopes: [
+  //       'email',
+  //       'https://www.googleapis.com/auth/contacts.readonly',
+  //     ],
+  //   );
+
+  //   final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+
+  //   final GoogleSignInAuthentication googleAuth =
+  //       await googleUser.authentication;
+
+  //   final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth.accessToken,
+  //     idToken: googleAuth.idToken,
+  //   );
+
+  //   return await FirebaseAuth.instance.signInWithCredential(credential).then(
+  //     (value) {
+  //       if (value.additionalUserInfo.isNewUser)
+  //         userReference.doc(value.user.uid).set(AppUsers(
+  //                 value.user.uid,
+  //                 value.user.displayName,
+  //                 value.user.email,
+  //                 0,
+  //                 value.user.displayName,
+  //                 "male",
+  //                 "2000 - 10 - 30",
+  //                 [],
+  //                 LatLng(3.064411, 101.600682),
+  //                 0)
+  //             .toMap());
+
+  //       Navigator.pushReplacement(
+  //           context, MaterialPageRoute(builder: (context) => MainPage()));
+  //     },
+  //   );
+  // }
 
   StreamSubscription vendingMachineListStream(
     void Function(VendingMachine) onMachineStream,
