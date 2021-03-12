@@ -44,7 +44,7 @@ class MainAppState with ChangeNotifier {
 
   int index = 0;
   double cashPool;
-  String prizeId = "SK12343431";
+  String prizeId = "SK1234343145";
   AppUsers thisAppUser;
   List<VendingMachine> vendingMachines = [];
   var location = Location();
