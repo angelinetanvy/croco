@@ -14,7 +14,7 @@
                android:value="AIzaSyCQm8NvMYXqOGgd-_tD-wNlmFq0CU9H7z4"/>
         <activity
           android:showWhenLocked="true"
-          android:turnScreenOn="true">
+          android:turnScreenOn="true" />
 
         <activity
             android:name=".MainActivity"

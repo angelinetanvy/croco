@@ -1,4 +1,6 @@
+import 'package:croco/Classes/AppUsers.dart';
 import 'package:croco/Classes/PurchasingHistory.dart';
+import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
 import 'package:croco/PrizePoolCard.dart';
 import 'package:croco/WalletCard.dart';
@@ -15,7 +17,7 @@ class WalletPage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainAppState mainState = context.watch<MainAppState>();
     return ChangeNotifierProvider(
-      create: (_) => WalletPageState(context, mainState),
+      create: (_) => WalletPageState(context, mainState, mainState.thisAppUser),
       builder: (context, snapshot) {
         WalletPageState state = context.watch<WalletPageState>();
         return Scaffold(
@@ -126,16 +128,33 @@ class WalletPageState with ChangeNotifier {
   String scanResult;
   BuildContext context;
   MainAppState mainState;
-  WalletPageState(this.context, this.mainState);
+  AppUsers appUser;
+  WalletPageState(this.context, this.mainState, this.appUser);
 
   void scanQR() async {
-    showMatchingPopUp(context);
     bool result = await SimplePermissions.checkPermission(Permission.Camera);
     PermissionStatus status = PermissionStatus.notDetermined;
     if (!result)
       status = await SimplePermissions.requestPermission(Permission.Camera);
-    if (result || status == PermissionStatus.authorized)
+    if (result || status == PermissionStatus.authorized) {
       scanResult = await scanner.scan();
+      FirebaseClass().onUserScansVendingMachine(
+        scanResult,
+        appUser,
+        () {
+          final snackBar = SnackBar(
+            content: Text('Yay the machine is dispensing!'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
+        () {
+          final snackBar = SnackBar(
+            content: Text('Bruh, are you at the wrong machine ?'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
+      );
+    }
   }
 
   void showTopUpPopUp(BuildContext context) {
@@ -221,7 +240,7 @@ class WalletPageState with ChangeNotifier {
                               ItemId(
                                 (mainState.thisAppUser.userHistory
                                         .where((pH) => !pH.hasPickedUp)
-                                        .toList()[index] as PurchasingHistory)
+                                        .toList()[index])
                                     .goods
                                     .goodId,
                                 show: false,

@@ -88,22 +88,42 @@ class FirebaseClass {
     vendingmachinereference.doc(vendingMachineId).update(newValue.toMap());
   }
 
-  void onUserScansVendingMachine(String vendingMachineId, AppUsers appUsers) {
+  onUserScansVendingMachine(
+    String vendingMachineId,
+    AppUsers appUsers,
+    Function afterSuccess,
+    Function afterFailed,
+  ) async {
+    /* 
+      Just plug in the user object and get the vending machine id through ,
+      the qr scanner      
+    */
+
+    // Analyzes the user purchasing history that has not picked up yet
     List<PurchasingHistory> prePuchases = appUsers.userHistory.where(
         (PurchasingHistory pH) =>
             !pH.hasPickedUp && pH.vendId == vendingMachineId);
-    if (prePuchases.length >= 1)
-      databaseReference.child(vendingMachineId).set(
+
+    // Will set up a node in the realtime database where the machine will listen
+    // to to make appropriate changes
+    if (prePuchases.length >= 1) {
+      databaseReference
+          .child(vendingMachineId)
+          .set(
             VendingMachineCommands(
               vendingMachineId,
               prePuchases.map((pH) => pH.goods),
               false,
             ).toMap(),
-          );
+          )
+          .then((_) => afterSuccess());
+    } else
+      afterFailed();
   }
 }
 
 class VendingMachineCommands {
+  // This will be added to the realtime database as machine commands
   String vendingMachineId;
   List<Goods> goods;
   bool hasExecuted;
