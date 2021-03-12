@@ -12,12 +12,12 @@
 
          <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyCQm8NvMYXqOGgd-_tD-wNlmFq0CU9H7z4"/>
-        <activity
-          android:showWhenLocked="true"
-          android:turnScreenOn="true" />
-
+      
+      
         <activity
             android:name=".MainActivity"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

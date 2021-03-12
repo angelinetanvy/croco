@@ -235,7 +235,7 @@ class CheckOutPageState with ChangeNotifier {
       final snackBar = SnackBar(
         content: Text('Oops, please top up your wallet !'),
       );
-      ScaffoldMessenger.of(buildContext).showSnackBar(snackBar);
+      Scaffold.of(buildContext).showSnackBar(snackBar);
       return null;
     }
 
