@@ -10,6 +10,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'Classes/AppUsers.dart';
+
 class FirebaseClass {
   CollectionReference vendingmachinereference =
       FirebaseFirestore.instance.collection('vending');
@@ -152,6 +154,15 @@ class FirebaseClass {
     vendingmachinereference.doc(vendingMachineId).update(newValue.toMap());
   }
 
+  onUserScanRecycle(String result, AppUsers appUser, Function afterSuccess,
+      Function afterFailed) async {
+    if (result.contains("RECYCLE")) {
+      afterSuccess();
+    } else {
+      afterFailed();
+    }
+  }
+
   onUserScansVendingMachine(
     String vendingMachineId,
     AppUsers appUsers,
@@ -164,9 +175,10 @@ class FirebaseClass {
     */
 
     // Analyzes the user purchasing history that has not picked up yet
-    List<PurchasingHistory> prePuchases = appUsers.userHistory.where(
-        (PurchasingHistory pH) =>
-            !pH.hasPickedUp && pH.vendId == vendingMachineId);
+    List<PurchasingHistory> prePuchases = appUsers.userHistory
+        .where((PurchasingHistory pH) =>
+            !pH.hasPickedUp && pH.vendId == vendingMachineId)
+        .toList();
 
     // Will set up a node in the realtime database where the machine will listen
     // to to make appropriate changes
@@ -176,7 +188,7 @@ class FirebaseClass {
           .set(
             VendingMachineCommands(
               vendingMachineId,
-              prePuchases.map((pH) => pH.goods),
+              prePuchases.map((pH) => pH.goods).toList(),
               false,
             ).toMap(),
           )

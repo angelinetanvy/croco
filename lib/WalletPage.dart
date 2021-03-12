@@ -138,20 +138,26 @@ class WalletPageState with ChangeNotifier {
       status = await SimplePermissions.requestPermission(Permission.Camera);
     if (result || status == PermissionStatus.authorized) {
       scanResult = await scanner.scan();
-      FirebaseClass().onUserScansVendingMachine(
+      await FirebaseClass().onUserScansVendingMachine(
         scanResult,
         appUser,
         () {
           final snackBar = SnackBar(
             content: Text('Yay the machine is dispensing!'),
           );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Scaffold.of(context).showSnackBar(snackBar);
+          mainState.updateAppUser(
+            mainState.thisAppUser.updatePurchasingHistory((List<dynamic> ls) {
+              ls.remove(appUser.userHistory.last);
+              return ls;
+            }),
+          );
         },
         () {
           final snackBar = SnackBar(
             content: Text('Bruh, are you at the wrong machine ?'),
           );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Scaffold.of(context).showSnackBar(snackBar);
         },
       );
     }

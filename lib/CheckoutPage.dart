@@ -253,7 +253,10 @@ class CheckOutPageState with ChangeNotifier {
     mainState.updateAppUser(
       mainState.thisAppUser
           .updateBalance(-goods.price + discount)
-          .updatePoint(-discount)
+          .updatePoint((double points){
+              points -= discount;
+              return points;
+            })
           .updatePurchasingHistory((List<dynamic> ls) {
         ls.add(pH);
         return ls;
