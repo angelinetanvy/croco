@@ -20,8 +20,8 @@ class AppUsers {
     return this;
   }
 
-  AppUsers updatePoint(double updateBy) {
-    points += updateBy;
+  AppUsers updatePoint(double Function(double) updateBy) {
+    points = updateBy(points);
     return this;
   }
 

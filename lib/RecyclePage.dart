@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
+import 'Classes/AppUsers.dart';
+import 'Firebase.dart';
+
 class KarmaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainAppState mainState = context.watch<MainAppState>();
     return ChangeNotifierProvider(
-      create: (_) => KarmaPageState(),
+      create: (_) => KarmaPageState(context, mainState, mainState.thisAppUser),
       builder: (context, child) {
         KarmaPageState karmaPageState = context.watch<KarmaPageState>();
         return Scaffold(
@@ -41,12 +44,40 @@ class KarmaPage extends StatelessWidget {
 
 class KarmaPageState with ChangeNotifier {
   String scanResult;
+  BuildContext context;
+  MainAppState mainState;
+  AppUsers appUser;
+  KarmaPageState(this.context, this.mainState, this.appUser);
+
   void scanQR() async {
     bool result = await SimplePermissions.checkPermission(Permission.Camera);
     PermissionStatus status = PermissionStatus.notDetermined;
     if (!result)
       status = await SimplePermissions.requestPermission(Permission.Camera);
-    if (result || status == PermissionStatus.authorized)
+    if (result || status == PermissionStatus.authorized) {
       scanResult = await scanner.scan();
+      await FirebaseClass().onUserScanRecycle(
+        scanResult,
+        appUser,
+        () {
+          final snackBar = SnackBar(
+            content: Text('Thank you for recycling! Points are added.'),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+          mainState.updateAppUser(
+            mainState.thisAppUser.updatePoint((double points) {
+              points += 100;
+              return points;
+            }),
+          );
+        },
+        () {
+          final snackBar = SnackBar(
+            content: Text('Trash is not recycable. Sorry.'),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+        },
+      );
+    }
   }
 }

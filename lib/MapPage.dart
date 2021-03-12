@@ -1,13 +1,12 @@
 import 'dart:collection';
 import 'package:croco/AppLoginPage.dart';
-import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'Classes/Goods.dart';
 import 'Classes/VendingMachine.dart';
@@ -50,86 +49,89 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainAppState state = context.watch<MainAppState>();
-    return ChangeNotifierProvider(
-        create: (_) => GoogleMapState(context, state),
-        builder: (context, snapshot) {
-          GoogleMapState mapState = context.watch<GoogleMapState>();
-          return SafeArea(
-            child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  onPressed: () async {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AppLoginPage(),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.logout),
-                ),
-              ),
-              body: Stack(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: GoogleMap(
-                      myLocationEnabled: true,
-                      compassEnabled: true,
-                      tiltGesturesEnabled: false,
-                      polylines: mapState._polylines,
-                      mapType: MapType.normal,
-                      onMapCreated: mapState._onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: state.thisAppUser?.location,
-                        zoom: 18.0,
-                      ),
-                      markers: mapState._markers,
+    return state.thisAppUser == null
+        ? Container(child: CircularProgressIndicator())
+        : ChangeNotifierProvider(
+            create: (_) => GoogleMapState(context, state),
+            builder: (context, snapshot) {
+              GoogleMapState mapState = context.watch<GoogleMapState>();
+              return SafeArea(
+                child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.black,
+                    leading: IconButton(
+                      onPressed: () async {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AppLoginPage(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.logout),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 8,
-                            child: CupertinoButton(
-                              padding: EdgeInsets.all(0),
-                              onPressed: () {
-                                showSearch(
-                                  context: context,
-                                  delegate: DataSearch(),
-                                );
-                              },
-                              child: CupertinoTextField(
-                                enabled: false,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
+                  body: Stack(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: GoogleMap(
+                          myLocationEnabled: true,
+                          compassEnabled: true,
+                          tiltGesturesEnabled: false,
+                          polylines: mapState._polylines,
+                          mapType: MapType.normal,
+                          onMapCreated: mapState._onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: state.thisAppUser.location,
+                            zoom: 18.0,
+                          ),
+                          markers: mapState._markers,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                elevation: 8,
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    showSearch(
+                                      context: context,
+                                      delegate: DataSearch(),
+                                    );
+                                  },
+                                  child: CupertinoTextField(
+                                    enabled: false,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    placeholderStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    placeholder: 'Search',
+                                  ),
                                 ),
-                                padding: EdgeInsets.all(16),
-                                placeholderStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                                placeholder: 'Search',
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        });
+                ),
+              );
+            });
   }
 }
 
@@ -147,6 +149,29 @@ class GoogleMapState with ChangeNotifier {
   MainAppState appState;
 
   GoogleMapState(this.context, this.appState) {
+    Location().getLocation().asStream().listen((LocationData coor) {
+      print(coor.latitude);
+      print(coor.longitude);
+      print("==========================");
+      appState.updateAppUser(
+          appState.thisAppUser.updateLocation(coor.latitude, coor.longitude));
+    });
+
+    appState.updateVendingMachineList(
+      (List<VendingMachine> machine) => machine
+          .map(
+            (VendingMachine v) => v.updateMachine(
+              v.name,
+              v.coor,
+              v.stocks,
+              appState.calculateDistance(
+                v.coor,
+                appState.thisAppUser.location,
+              ),
+            ),
+          )
+          .toList(),
+    );
     setSourceAndDestinationIcons();
   }
 
@@ -214,17 +239,15 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        icon: AnimatedIcon(
-          icon: AnimatedIcons.menu_arrow,
-          progress: transitionAnimation,
-        ),
-        onPressed: () {
-          close(context, null);
-        });
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
   }
-
-  @override
-  Widget buildResults(BuildContext context) {}
 
   @override
   Widget buildSuggestions(BuildContext context) {
@@ -253,6 +276,12 @@ class DataSearch extends SearchDelegate<String> {
             leading: Icon(Icons.local_drink),
             title: Text(suggestionList[index].name)),
         itemCount: suggestionList.length);
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    throw UnimplementedError();
   }
 }
 

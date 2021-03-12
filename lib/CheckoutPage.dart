@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croco/Classes/PurchasingHistory.dart';
 import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
@@ -81,13 +82,17 @@ class CheckoutPage extends StatelessWidget {
                           onTap: () {
                             if (index == 0) {
                               state.onPurchase(
-                                  mainState, vM, goods, context, 0.0);
+                                mainState,
+                                vM,
+                                goods,
+                                0.0,
+                              );
                             } else if (index == 1) {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (context) => Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.4,
+                                      MediaQuery.of(context).size.height * 0.5,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -102,8 +107,12 @@ class CheckoutPage extends StatelessWidget {
                                         children: [
                                           CupertinoButton(
                                             onPressed: () {
-                                              state.onPurchase(mainState, vM,
-                                                  goods, context, 1.0);
+                                              state.onPurchase(
+                                                mainState,
+                                                vM,
+                                                goods,
+                                                1.0,
+                                              );
                                             },
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 30),
@@ -123,8 +132,12 @@ class CheckoutPage extends StatelessWidget {
                                           ),
                                           CupertinoButton(
                                             onPressed: () {
-                                              state.onPurchase(mainState, vM,
-                                                  goods, context, 2.0);
+                                              state.onPurchase(
+                                                mainState,
+                                                vM,
+                                                goods,
+                                                2.0,
+                                              );
                                             },
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 30),
@@ -144,8 +157,12 @@ class CheckoutPage extends StatelessWidget {
                                           ),
                                           CupertinoButton(
                                             onPressed: () {
-                                              state.onPurchase(mainState, vM,
-                                                  goods, context, 5.0);
+                                              state.onPurchase(
+                                                mainState,
+                                                vM,
+                                                goods,
+                                                5.0,
+                                              );
                                             },
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 30),
@@ -180,7 +197,6 @@ class CheckoutPage extends StatelessWidget {
                                                 goods.price,
                                                 goods.image,
                                               ),
-                                              context,
                                               0.0,
                                             );
                                           },
@@ -226,7 +242,6 @@ class CheckOutPageState with ChangeNotifier {
     MainAppState mainState,
     VendingMachine vM,
     Goods goods,
-    BuildContext context,
     double discount,
   ) {
     int date = DateTime.now().millisecondsSinceEpoch;
@@ -253,8 +268,10 @@ class CheckOutPageState with ChangeNotifier {
     mainState.updateAppUser(
       mainState.thisAppUser
           .updateBalance(-goods.price + discount)
-          .updatePoint(-discount)
-          .updatePurchasingHistory((List<dynamic> ls) {
+          .updatePoint((double points) {
+        points -= discount;
+        return points;
+      }).updatePurchasingHistory((List<dynamic> ls) {
         ls.add(pH);
         return ls;
       }),
@@ -279,9 +296,12 @@ class CheckOutPageState with ChangeNotifier {
     );
 
     mainState.updateCashPool(goods.price * 0.02);
+    FirebaseFirestore.instance.collection('pricepool').doc("pricepool").set(
+      {'pricepool': mainState.cashPool},
+    );
     mainState.updateIndex(1);
     Navigator.pushReplacement(
-      context,
+      buildContext,
       MaterialPageRoute(
         builder: (context) => RoutingPage(
           mainState.thisAppUser.location,

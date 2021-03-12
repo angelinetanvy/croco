@@ -10,6 +10,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'Classes/AppUsers.dart';
+
 class FirebaseClass {
   CollectionReference vendingmachinereference =
       FirebaseFirestore.instance.collection('vending');
@@ -150,6 +152,15 @@ class FirebaseClass {
 
   void updateVendingMachine(String vendingMachineId, VendingMachine newValue) {
     vendingmachinereference.doc(vendingMachineId).update(newValue.toMap());
+  }
+
+  onUserScanRecycle(String result, AppUsers appUser, Function afterSuccess,
+      Function afterFailed) async {
+    if (result.contains("RECYCLE")) {
+      afterSuccess();
+    } else {
+      afterFailed();
+    }
   }
 
   onUserScansVendingMachine(

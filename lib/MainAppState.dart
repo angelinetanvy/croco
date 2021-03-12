@@ -1,7 +1,10 @@
 import 'dart:math' show cos, sqrt, asin;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:croco/Classes/AppUsers.dart';
 import 'package:croco/Classes/VendingMachine.dart';
 import 'package:croco/Firebase.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -40,8 +43,8 @@ class MainAppState with ChangeNotifier {
   }
 
   int index = 0;
-  double cashPool = 0;
-  String prizeId = "SK12343434";
+  double cashPool;
+  String prizeId = "SK12343431";
   AppUsers thisAppUser;
   List<VendingMachine> vendingMachines = [];
   var location = Location();
@@ -56,15 +59,13 @@ class MainAppState with ChangeNotifier {
       );
     });
     getLocation();
+    listenToPricePool();
   }
 
   getLocation() {
     location.getLocation().asStream().listen(
       (LocationData coor) {
         vendingMachines.forEach((VendingMachine vM) {
-          print("========================================================");
-          print(calculateDistance(
-              LatLng(coor.latitude, coor.longitude), vM.coor));
           if (calculateDistance(
                   LatLng(coor.latitude, coor.longitude), vM.coor) <=
               1000) {
@@ -73,6 +74,17 @@ class MainAppState with ChangeNotifier {
         });
       },
     );
+  }
+
+  listenToPricePool() {
+    FirebaseFirestore.instance
+        .collection("pricepool")
+        .doc("pricepool")
+        .snapshots()
+        .listen((event) {
+      cashPool = (event.data()['pricepool']).toDouble();
+      notifyListeners();
+    });
   }
 
   double calculateDistance(LatLng pos1, LatLng pos2) {

@@ -1,4 +1,5 @@
 import 'package:croco/Classes/AppUsers.dart';
+import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/PurchasingHistory.dart';
 import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
@@ -139,16 +140,25 @@ class WalletPageState with ChangeNotifier {
     if (result || status == PermissionStatus.authorized) {
       scanResult = await scanner.scan();
       await FirebaseClass().onUserScansVendingMachine(
-        "0",
+        scanResult,
         appUser,
         () {
           final snackBar = SnackBar(
+            duration: Duration(seconds: 1),
             content: Text('Yay the machine is dispensing!'),
           );
           Scaffold.of(context).showSnackBar(snackBar);
+          showMatchingPopUp(context, appUser.userHistory.last.goods);
+          mainState.updateAppUser(
+            mainState.thisAppUser.updatePurchasingHistory((List<dynamic> ls) {
+              ls.remove(appUser.userHistory.last);
+              return ls;
+            }),
+          );
         },
         () {
           final snackBar = SnackBar(
+            duration: Duration(seconds: 1),
             content: Text('Bruh, are you at the wrong machine ?'),
           );
           Scaffold.of(context).showSnackBar(snackBar);
@@ -205,7 +215,7 @@ class WalletPageState with ChangeNotifier {
     Navigator.pop(context);
   }
 
-  void showMatchingPopUp(BuildContext context) {
+  void showMatchingPopUp(BuildContext context, Goods pickedItem) {
     showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -223,26 +233,19 @@ class WalletPageState with ChangeNotifier {
                 child: Container(
                   color: Colors.white,
                   child: ListView.builder(
-                    itemCount: mainState.thisAppUser.userHistory
-                        .where((pH) => !pH.hasPickedUp)
-                        .toList()
-                        .length,
+                    itemCount: 1,
                     itemBuilder: (context, index) {
                       return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.remove_red_eye),
-                            onPressed: () {},
-                          ),
                           Column(
                             children: [
-                              Text("Item ID"),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Item ID"),
+                              ),
                               ItemId(
-                                (mainState.thisAppUser.userHistory
-                                        .where((pH) => !pH.hasPickedUp)
-                                        .toList()[index])
-                                    .goods
-                                    .goodId,
+                                pickedItem.goodId,
                                 show: false,
                               ),
                             ],
@@ -253,7 +256,6 @@ class WalletPageState with ChangeNotifier {
                   ),
                 ),
               ),
-              CustomButton(() {}, 'REVEAL')
             ],
           ),
         ),
