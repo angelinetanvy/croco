@@ -1,10 +1,12 @@
 import 'dart:collection';
+import 'package:croco/AppLoginPage.dart';
 import 'package:croco/Firebase.dart';
 import 'package:croco/MainAppState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'Classes/Goods.dart';
 import 'Classes/VendingMachine.dart';
@@ -53,6 +55,26 @@ class MapPage extends StatelessWidget {
           GoogleMapState mapState = context.watch<GoogleMapState>();
           return SafeArea(
             child: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  onPressed: () async {
+                    final _googleSignIn = new GoogleSignIn(
+                      scopes: [
+                        'email',
+                        'https://www.googleapis.com/auth/contacts.readonly',
+                      ],
+                    );
+                    await _googleSignIn.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AppLoginPage(),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.logout),
+                ),
+              ),
               body: Stack(
                 children: [
                   Container(
@@ -66,7 +88,7 @@ class MapPage extends StatelessWidget {
                       mapType: MapType.normal,
                       onMapCreated: mapState._onMapCreated,
                       initialCameraPosition: CameraPosition(
-                        target: state.thisAppUser.location,
+                        target: state.thisAppUser?.location,
                         zoom: 18.0,
                       ),
                       markers: mapState._markers,
@@ -131,9 +153,6 @@ class GoogleMapState with ChangeNotifier {
 
   GoogleMapState(this.context, this.appState) {
     setSourceAndDestinationIcons();
-    FirebaseClass().vendingMachineListStream((a) {
-      print(a.toMap());
-    });
   }
 
   void setSourceAndDestinationIcons() async {

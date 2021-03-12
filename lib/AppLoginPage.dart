@@ -29,11 +29,21 @@ class AppLoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  "WELCOME",
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                Column(
+                  children: [
+                    Text(
+                      "H E L L O",
+                      style: TextStyle(
+                        fontSize: 40,
+                      ),
+                    ),
+                    Text(
+                      "T H E R E",
+                      style: TextStyle(
+                        fontSize: 40,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -50,9 +60,8 @@ class AppLoginPage extends StatelessWidget {
               ),
               onPressed: () {
                 FirebaseClass().loginUserWithFirebase(
-                  (AppUsers appUser) {
-                    state.updateAppUser(appUser);
-                  },
+                  (AppUsers appUser) => state.updateAppUser(appUser),
+                  context,
                 );
               },
             ),

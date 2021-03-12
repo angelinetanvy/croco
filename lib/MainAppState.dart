@@ -1,18 +1,50 @@
-import 'dart:math';
+import 'dart:math' show cos, sqrt, asin;
 import 'package:croco/Classes/AppUsers.dart';
-import 'package:croco/Classes/Goods.dart';
 import 'package:croco/Classes/VendingMachine.dart';
 import 'package:croco/Firebase.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class MainAppState with ChangeNotifier {
+  FlutterLocalNotificationsPlugin localNotif;
+
+  void initState() {
+    var androidInitialize =
+        new AndroidInitializationSettings('ic_launcher.png');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+  }
+
+  Future _showNotification() async {
+    var androidInitialize = new AndroidInitializationSettings('@mipmap/logo');
+    var iOSInitialize = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: androidInitialize, iOS: iOSInitialize);
+
+    localNotif = new FlutterLocalNotificationsPlugin();
+    localNotif.initialize(initializationSettings);
+    var androidDetails = new AndroidNotificationDetails(
+        "channelId", "channelName", "There is a vending machine nearby!",
+        importance: Importance.high);
+    var iosDetails = new IOSNotificationDetails();
+    var generalNotificationDetails =
+        new NotificationDetails(android: androidDetails, iOS: iosDetails);
+    await localNotif.show(0, "Feeling thirsty?",
+        "There is a vending machine nearby!", generalNotificationDetails);
+  }
+
   int index = 0;
   double cashPool = 0;
   String prizeId = "SK12343434";
   AppUsers thisAppUser;
-
   List<VendingMachine> vendingMachines = [];
+  var location = Location();
 
   MainAppState() {
     FirebaseClass().vendingMachineListStream((VendingMachine vending) {
@@ -23,6 +55,24 @@ class MainAppState with ChangeNotifier {
         },
       );
     });
+    getLocation();
+  }
+
+  getLocation() {
+    location.getLocation().asStream().listen(
+      (LocationData coor) {
+        vendingMachines.forEach((VendingMachine vM) {
+          print("========================================================");
+          print(calculateDistance(
+              LatLng(coor.latitude, coor.longitude), vM.coor));
+          if (calculateDistance(
+                  LatLng(coor.latitude, coor.longitude), vM.coor) <=
+              1000) {
+            _showNotification();
+          }
+        });
+      },
+    );
   }
 
   double calculateDistance(LatLng pos1, LatLng pos2) {

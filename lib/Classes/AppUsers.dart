@@ -15,6 +15,11 @@ class AppUsers {
     return this;
   }
 
+  AppUsers updateLocation(double lat, double lng) {
+    location = LatLng(lat, lng);
+    return this;
+  }
+
   AppUsers updatePoint(double updateBy) {
     points += updateBy;
     return this;
